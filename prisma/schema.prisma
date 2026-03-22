@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  WRITER
+  EDITOR
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AuditAction {
+  CREATE_POST
+  UPDATE_POST
+  REQUEST_REVIEW
+  PUBLISH_POST
+  UNPUBLISH_POST
+  LOGIN
+  LOGOUT
+}
+
+model User {
+  id             String      @id @default(cuid())
+  email          String      @unique
+  name           String
+  slug           String      @unique
+  bio            String?
+  role           UserRole    @default(WRITER)
+  passwordHash   String
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  posts          Post[]
+  auditLogs      AuditLog[]
+
+  @@index([role, isActive])
+}
+
+model Category {
+  id             String         @id @default(cuid())
+  slug           String         @unique
+  name           String
+  description    String?
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  postCategories PostCategory[]
+
+  @@index([isActive])
+}
+
+model Post {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  title            String
+  excerpt          String
+  content          Json
+  seoTitle         String?
+  seoDescription   String?
+  canonicalPath    String?
+  status           PostStatus     @default(DRAFT)
+  publishedAt      DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  authorId         String
+  author           User           @relation(fields: [authorId], references: [id])
+  postCategories   PostCategory[]
+  images           PostImage[]
+  auditLogs        AuditLog[]
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([authorId, status])
+}
+
+model PostCategory {
+  postId       String
+  categoryId   String
+  assignedAt   DateTime @default(now())
+
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+  @@index([categoryId, assignedAt(sort: Desc)])
+}
+
+model PostImage {
+  id            String   @id @default(cuid())
+  postId        String
+  altText       String
+  imageUrl      String
+  width         Int?
+  height        Int?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, sortOrder])
+}
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  action        AuditAction
+  actorId       String?
+  postId        String?
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+
+  actor         User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  post          Post?       @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([postId, createdAt(sort: Desc)])
+}

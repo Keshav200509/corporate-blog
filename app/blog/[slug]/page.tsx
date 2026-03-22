@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/blog/data";
-import {
-  buildArticleJsonLd,
-  getCanonicalUrl,
-  getPostDescription,
-  getPostTitle,
-  getSiteName
-} from "@/lib/blog/seo";
+import { getPublishedPostBySlug, getPublishedPosts } from "../../../src/blog/data";
+import { buildArticleJsonLd, getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "../../../src/blog/seo";
 
 export const revalidate = 900;
 
@@ -17,14 +11,16 @@ type BlogPostPageProps = {
   };
 };
 
-export function generateStaticParams() {
-  return getPublishedPosts().map((post) => ({
+export async function generateStaticParams() {
+  const posts = await getPublishedPosts();
+
+  return posts.map((post) => ({
     slug: post.slug
   }));
 }
 
-export function generateMetadata({ params }: BlogPostPageProps): Metadata {
-  const post = getPublishedPostBySlug(params.slug);
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const post = await getPublishedPostBySlug(params.slug);
 
   if (!post) {
     return {
@@ -56,8 +52,8 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
   };
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = getPublishedPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = await getPublishedPostBySlug(params.slug);
 
   if (!post) {
     notFound();
@@ -69,7 +65,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
       <article className="space-y-5">
         <header className="space-y-3">
-          <p className="text-xs uppercase tracking-wide text-zinc-400">{post.category.name}</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-400">{post.categories[0]?.name ?? "General"}</p>
           <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
           <p className="text-sm text-zinc-300">{post.excerpt}</p>
         </header>
