@@ -1,26 +1,34 @@
-export type BlogPostStatus = "DRAFT" | "PUBLISHED";
+export type BlogPostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type BlogAuthor = {
-    id: string;
-    name: string;
-    slug: string;
-    bio: string;
+  id: string;
+  name: string;
+  slug: string;
+  bio: string | null;
+};
+
+export type BlogCategory = {
+  id: string;
+  name: string;
+  slug: string;
 };
 
 export type BlogPost = {
-    id: string;
-    slug: string;
-    title: string;
-    excerpt: string;
-    content: string[];
-    status: BlogPostStatus;
-    publishedAt: string | null;
-    updatedAt: string;
-    author: BlogAuthor;
-    category: {
-        name: string;
-        slug: string;
-    };
-    seoTitle?: string;
-    seoDescription?: string;
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string[];
+  status: BlogPostStatus;
+  publishedAt: string | null;
+  updatedAt: string;
+  author: BlogAuthor;
+  categories: BlogCategory[];
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+};
+
+export type BlogPostFilters = {
+  categorySlug?: string;
+  authorSlug?: string;
 };

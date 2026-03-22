@@ -8,7 +8,7 @@ type RouteContext = {
 };
 
 export async function GET(_request: Request, { params }: RouteContext) {
-  const post = getPublishedPostBySlug(params.slug);
+  const post = await getPublishedPostBySlug(params.slug);
 
   if (!post) {
     return NextResponse.json(
