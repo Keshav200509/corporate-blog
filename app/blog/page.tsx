@@ -1,43 +1,50 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getPublishedPosts } from "@/src/blog/data.ts";
-import { getCanonicalUrl, getSiteName } from "@/src/blog/seo.ts";
+import { getPublishedPosts } from "../../src/blog/data";
+import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
 
 export const revalidate = 900;
 
 export const metadata: Metadata = {
-    title: `Blog | ${getSiteName()}`,
-    description: "Insights on engineering, SEO, and scalable digital publishing.",
-    alternates: {
-        canonical: getCanonicalUrl("/blog")
-    }
+  title: `Blog | ${getSiteName()}`,
+  description: "Insights on engineering, SEO, and scalable digital publishing.",
+  alternates: {
+    canonical: getCanonicalUrl("/blog")
+  }
 };
 
-export default function BlogIndexPage() {
-    const posts = getPublishedPosts();
+export default async function BlogIndexPage() {
+  const posts = await getPublishedPosts();
 
-    return (
-        <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-12">
-            <header className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">The Corporate Blog</h1>
-                <p className="text-sm text-zinc-300">
-                    Production-minded articles on platform engineering, SEO, and growth operations.
-                </p>
-            </header>
+  return (
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-12">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">The Corporate Blog</h1>
+        <p className="text-sm text-zinc-300">Production-minded articles on platform engineering, SEO, and growth operations.</p>
+      </header>
 
-            <section className="space-y-4" aria-label="Published posts">
-                {posts.map((post) => (
-                    <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
-                        <p className="text-xs uppercase tracking-wide text-zinc-400">{post.category.name}</p>
-                        <h2 className="mt-2 text-xl font-semibold">
-                            <Link href={`/blog/${post.slug}`} className="hover:underline">
-                                {post.title}
-                            </Link>
-                        </h2>
-                        <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
-                    </article>
-                ))}
-            </section>
-        </main>
-    );
+      <section className="space-y-4" aria-label="Published posts">
+        {posts.map((post) => (
+          <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
+            <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-zinc-400">
+              {post.categories.map((category) => (
+                <Link key={category.id} href={`/category/${category.slug}`} className="hover:underline">
+                  {category.name}
+                </Link>
+              ))}
+            </div>
+            <h2 className="mt-2 text-xl font-semibold">
+              <Link href={`/blog/${post.slug}`} className="hover:underline">
+                {post.title}
+              </Link>
+            </h2>
+            <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
+            <p className="mt-3 text-xs text-zinc-400">
+              By <Link href={`/author/${post.author.slug}`} className="hover:underline">{post.author.name}</Link>
+            </p>
+          </article>
+        ))}
+      </section>
+    </main>
+  );
 }
