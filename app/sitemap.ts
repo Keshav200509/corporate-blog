@@ -18,11 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ];
 
-
-  const publishedPosts = await getPublishedPosts();
-
-  const posts = publishedPosts.map((post) => ({
-
   if (!process.env.DATABASE_URL) {
     return staticRoutes;
   }
@@ -36,8 +31,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7
   }));
 
-
-  return [...staticRoutes, ...posts];
   const categoryRoutes = categories.map((category) => ({
     url: getCanonicalUrl(`/category/${category.slug}`),
     changeFrequency: "daily" as const,
