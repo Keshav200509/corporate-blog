@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { describe, expect, it, vi } from "vitest";
-=======
 import { beforeAll, describe, expect, it, vi } from "vitest";
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
 
 vi.mock("../src/blog/services/post-service", () => ({
   listPublishedPosts: vi.fn(async () => [
@@ -21,10 +17,7 @@ vi.mock("../src/blog/services/post-service", () => ({
         slug: "maya-chen",
         bio: "Editor"
       },
-<<<<<<< HEAD
-=======
       faqs: [],
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
       categories: [
         {
           id: "c-1",
@@ -53,10 +46,7 @@ vi.mock("../src/blog/services/post-service", () => ({
             slug: "maya-chen",
             bio: "Editor"
           },
-<<<<<<< HEAD
-=======
           faqs: [],
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
           categories: [
             {
               id: "c-1",
@@ -74,13 +64,10 @@ vi.mock("../src/blog/services/post-service", () => ({
 import { getPublishedPostBySlug, getPublishedPosts } from "../src/blog/data";
 import { buildArticleJsonLd, getCanonicalUrl, getPostDescription, getPostTitle } from "../src/blog/seo";
 
-<<<<<<< HEAD
-=======
 beforeAll(() => {
   process.env.DATABASE_URL = "postgresql://test/test";
 });
 
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
 describe("blog content selectors", () => {
   it("returns only published posts", async () => {
     const posts = await getPublishedPosts();

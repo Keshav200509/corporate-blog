@@ -30,22 +30,19 @@ enum AuditAction {
 }
 
 model User {
-  id             String      @id @default(cuid())
-  email          String      @unique
+  id             String         @id @default(cuid())
+  email          String         @unique
   name           String
-  slug           String      @unique
+  slug           String         @unique
   bio            String?
-  role           UserRole    @default(WRITER)
+  role           UserRole       @default(WRITER)
   passwordHash   String
-  isActive       Boolean     @default(true)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   posts          Post[]
   auditLogs      AuditLog[]
-<<<<<<< HEAD
-=======
   refreshTokens  RefreshToken[]
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
 
   @@index([role, isActive])
 }
@@ -81,10 +78,7 @@ model Post {
   postCategories   PostCategory[]
   images           PostImage[]
   auditLogs        AuditLog[]
-<<<<<<< HEAD
-=======
   faqs             PostFaq[]
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
 
   @@index([status, publishedAt(sort: Desc)])
   @@index([authorId, status])
@@ -117,11 +111,8 @@ model PostImage {
   @@index([postId, sortOrder])
 }
 
-<<<<<<< HEAD
-=======
-
 model PostFaq {
-  id         String   @id @default(cuid())
+  id          String   @id @default(cuid())
   postId      String
   question    String
   answer      String
@@ -133,7 +124,6 @@ model PostFaq {
   @@index([postId, sortOrder])
 }
 
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
 model AuditLog {
   id            String      @id @default(cuid())
   action        AuditAction
@@ -149,8 +139,6 @@ model AuditLog {
   @@index([action, createdAt(sort: Desc)])
   @@index([postId, createdAt(sort: Desc)])
 }
-<<<<<<< HEAD
-=======
 
 model RefreshToken {
   id         String   @id
@@ -167,4 +155,3 @@ model RefreshToken {
   @@index([userId, expiresAt(sort: Desc)])
   @@index([revokedAt])
 }
->>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
