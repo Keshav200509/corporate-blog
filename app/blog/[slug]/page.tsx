@@ -1,16 +1,31 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import { getPublishedPostBySlug } from "../../../src/blog/data";
+
 import { getPublishedPostBySlug, getPublishedPosts } from "../../../src/blog/data";
+
 import { getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "../../../src/blog/seo";
+import { listPublishedPostSlugs } from "../../../src/blog/services/post-service";
 import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, buildFaqJsonLd } from "../../../src/blog/structured-data";
 
-export const revalidate = 900;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   if (!process.env.DATABASE_URL) {
     return [];
   }
+
+
+  const slugs = await listPublishedPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
+
 
   const posts = await getPublishedPosts();
 
@@ -22,6 +37,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
+
 
   if (!post) {
     return {
@@ -53,9 +69,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
+
+
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
+
 
   if (!post) {
     notFound();
@@ -66,8 +90,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const authorJsonLd = buildAuthorJsonLd(post);
   const faqJsonLd = buildFaqJsonLd(post);
 
+  const readingTimeMinutes = Math.max(1, Math.ceil(post.content.join(" ").split(/\s+/).filter(Boolean).length / 200));
+  const publishedLabel = post.publishedAt
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(post.publishedAt))
+    : "Unscheduled";
+
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
+      <Link href="/blog" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+        ← All posts
+      </Link>
+
+
+
+  return (
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
+
       <article className="space-y-5">
         <header className="space-y-3">
           <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-400">
@@ -80,6 +118,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
           <p className="text-sm text-zinc-300">{post.excerpt}</p>
+
+          <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-400">
+            <span>{publishedLabel}</span>
+            <span>•</span>
+            <span>{readingTimeMinutes} min read</span>
+          </div>
+
           <p className="text-sm text-zinc-400">
             By{" "}
             <Link href={`/author/${post.author.slug}`} className="hover:underline">
@@ -107,6 +152,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         ) : null}
       </article>
 
+      <section className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+        <p className="text-xs uppercase tracking-wide text-zinc-500">Author</p>
+        <div className="mt-2 flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold dark:bg-zinc-800">
+            {post.author.name.slice(0, 1).toUpperCase()}
+          </span>
+          <div>
+            <p className="font-medium">
+              <Link href={`/author/${post.author.slug}`} className="hover:underline">
+                {post.author.name}
+              </Link>
+            </p>
+            {post.author.bio ? <p className="text-sm text-zinc-500 dark:text-zinc-400">{post.author.bio}</p> : null}
+          </div>
+        </div>
+      </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(authorJsonLd) }} />
