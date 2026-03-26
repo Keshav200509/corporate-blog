@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
+const isProductionNodeEnv = process.env.NODE_ENV === "production";
+const isNextBuildOrStartCommand = process.argv.includes("build") || process.argv.includes("start");
 
-if (process.env.NODE_ENV === "production") {
+if (isProductionNodeEnv && isNextBuildOrStartCommand) {
   if (!process.env.NEXT_PUBLIC_SITE_URL) {
     throw new Error("NEXT_PUBLIC_SITE_URL is required in production");
   }
