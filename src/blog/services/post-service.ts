@@ -36,11 +36,26 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
       slug: post.author.slug,
       bio: post.author.bio
     },
+<<<<<<< HEAD
     categories: post.postCategories.map((postCategory) => ({
+=======
+    categories: (post.postCategories ?? []).map((postCategory: any) => ({
+>>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
       id: postCategory.category.id,
       name: postCategory.category.name,
       slug: postCategory.category.slug
     })),
+<<<<<<< HEAD
+=======
+    faqs: Array.isArray(post.faqs)
+      ? post.faqs.map((faq: any) => ({
+          id: faq.id,
+          question: faq.question,
+          answer: faq.answer,
+          sortOrder: faq.sortOrder
+        }))
+      : [],
+>>>>>>> origin/codex/implement-phase-1-for-corporate-blog-cramvb
     seoTitle: post.seoTitle,
     seoDescription: post.seoDescription
   };

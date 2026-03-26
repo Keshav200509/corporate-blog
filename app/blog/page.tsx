@@ -23,19 +23,19 @@ export default async function BlogIndexPage() {
         <p className="text-sm text-zinc-300">Production-minded articles on platform engineering, SEO, and growth operations.</p>
       </header>
 
-      <section className="space-y-4" aria-label="Published posts">
-        {posts.map((post) => (
-          <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
-            <p className="text-xs uppercase tracking-wide text-zinc-400">{post.categories[0]?.name ?? "General"}</p>
-            <h2 className="mt-2 text-xl font-semibold">
-              <Link href={`/blog/${post.slug}`} className="hover:underline">
-                {post.title}
-              </Link>
-            </h2>
-            <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
-          </article>
-        ))}
-      </section>
-    </main>
-  );
+            <section className="space-y-4" aria-label="Published posts">
+                {posts.map((post) => (
+                    <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
+                        <p className="text-xs uppercase tracking-wide text-zinc-400">{post.category.name}</p>
+                        <h2 className="mt-2 text-xl font-semibold">
+                            <Link href={`/blog/${post.slug}`} className="hover:underline">
+                                {post.title}
+                            </Link>
+                        </h2>
+                        <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
+                    </article>
+                ))}
+            </section>
+        </main>
+    );
 }

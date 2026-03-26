@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Check conflict markers
+        run: ./scripts/check-conflict-markers.sh
+
       - name: Lint
         run: npm run lint
 
