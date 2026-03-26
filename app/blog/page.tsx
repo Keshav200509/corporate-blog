@@ -46,6 +46,7 @@ export default async function BlogIndexPage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-300">Production-minded articles on platform engineering, SEO, and growth operations.</p>
       </header>
 
+
       <section className="-mx-2 overflow-x-auto px-2 pb-1" aria-label="Category filters">
         <div className="flex min-w-max gap-2">
           {categories.map((category) => (
@@ -87,6 +88,11 @@ export default async function BlogIndexPage() {
         {remaining.map((post) => (
           <article key={post.id} className="rounded-xl border border-zinc-200 p-5 shadow-sm dark:border-zinc-800">
             <p className="text-xs uppercase tracking-wide text-zinc-500">{post.categories[0]?.name ?? "General"}</p>
+
+      <section className="space-y-4" aria-label="Published posts">
+        {posts.map((post) => (
+          <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
+            <p className="text-xs uppercase tracking-wide text-zinc-400">{post.categories[0]?.name ?? "General"}</p>
             <h2 className="mt-2 text-xl font-semibold">
               <Link href={`/blog/${post.slug}`} className="hover:underline">
                 {post.title}
@@ -101,6 +107,8 @@ export default async function BlogIndexPage() {
               <span>•</span>
               <span>{formatDate(post.publishedAt)}</span>
             </div>
+
+            <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
           </article>
         ))}
       </section>
