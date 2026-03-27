@@ -4,11 +4,17 @@ import { verifyPassword } from "../../../../src/auth/password";
 import { createAuditLog, createRefreshSession, findUserByEmail } from "../../../../src/auth/repositories";
 import { loginSchema } from "../../../../src/auth/validation";
 import { logError, logInfo } from "../../../../src/observability/log";
+import { checkRateLimit, getRateLimitKey } from "../../../../src/lib/rate-limit";
 
 export async function POST(request: Request) {
   const requestId = request.headers.get("x-request-id") ?? "unknown";
 
   try {
+    const key = getRateLimitKey(request, "login");
+    if (!checkRateLimit(key, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ message: "Too many attempts" }, { status: 429 });
+    }
+
     const parsed = loginSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json({ message: "Invalid request", issues: parsed.error.issues }, { status: 400 });

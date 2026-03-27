@@ -1,16 +1,31 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import { getPublishedPostBySlug } from "../../../src/blog/data";
+
 import { getPublishedPostBySlug, getPublishedPosts } from "../../../src/blog/data";
+
 import { getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "../../../src/blog/seo";
+import { listPublishedPostSlugs } from "../../../src/blog/services/post-service";
 import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, buildFaqJsonLd } from "../../../src/blog/structured-data";
 
-export const revalidate = 900;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   if (!process.env.DATABASE_URL) {
     return [];
   }
+
+
+  const slugs = await listPublishedPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
+
 
   const posts = await getPublishedPosts();
 
@@ -22,6 +37,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
+
 
   if (!post) {
     return {
@@ -53,9 +69,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
+
+
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
+
 
   if (!post) {
     notFound();
@@ -68,6 +92,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
+
+      <Link href="/blog" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+        ← All posts
+      </Link>
+
+
       <article className="space-y-5">
         <header className="space-y-3">
           <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-400">
