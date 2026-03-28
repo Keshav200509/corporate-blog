@@ -1,0 +1,67 @@
+import { prisma } from "../../lib/db/prisma";
+import { PUBLIC_POST_WHERE } from "../guards/publication";
+import { listPublishedPosts } from "./post-service";
+
+function hasDatabase() {
+  return Boolean(process.env.DATABASE_URL);
+}
+
+export async function listCategories() {
+  if (!hasDatabase()) {
+    return [];
+  }
+
+  return prisma.category.findMany({
+    where: {
+      isActive: true,
+      postCategories: {
+        some: {
+          post: PUBLIC_POST_WHERE
+        }
+      }
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      _count: {
+        select: {
+          postCategories: true
+        }
+      }
+    },
+    orderBy: {
+      name: "asc"
+    }
+  });
+}
+
+export async function getCategoryWithPosts(slug: string) {
+  if (!hasDatabase()) {
+    return null;
+  }
+
+  const category = await prisma.category.findUnique({
+    where: {
+      slug,
+      isActive: true
+    },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      description: true
+    }
+  });
+
+  if (!category) {
+    return null;
+  }
+
+  const posts = await listPublishedPosts({ categorySlug: slug });
+
+  return {
+    ...category,
+    posts
+  };
+}
