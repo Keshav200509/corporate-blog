@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
 
+
   const posts = await getPublishedPosts();
 
   return posts.map((post) => ({
@@ -95,7 +96,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <Link href="/blog" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
         ← All posts
       </Link>
-
 
 
       <article className="space-y-5">
