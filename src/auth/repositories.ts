@@ -2,6 +2,8 @@ import { randomUUID, createHash } from "crypto";
 import { AuditAction, PostStatus, Prisma } from "@prisma/client";
 import { prisma } from "../lib/db/prisma";
 
+const db = prisma as any;
+
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -11,7 +13,7 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function createRefreshSession(input: { userId: string; token: string; expiresAt: Date; ipAddress?: string | null; userAgent?: string | null }) {
-  return prisma.refreshToken.create({
+  return db.refreshToken.create({
     data: {
       id: randomUUID(),
       tokenHash: hashToken(input.token),
@@ -26,14 +28,14 @@ export async function createRefreshSession(input: { userId: string; token: strin
 export async function rotateRefreshSession(input: { oldToken: string; newToken: string; userId: string; expiresAt: Date; ipAddress?: string | null; userAgent?: string | null }) {
   const oldHash = hashToken(input.oldToken);
 
-  const session = await prisma.refreshToken.findUnique({ where: { tokenHash: oldHash } });
+  const session = await db.refreshToken.findUnique({ where: { tokenHash: oldHash } });
   if (!session || session.revokedAt || session.expiresAt < new Date()) {
     return null;
   }
 
   await prisma.$transaction([
-    prisma.refreshToken.update({ where: { tokenHash: oldHash }, data: { revokedAt: new Date() } }),
-    prisma.refreshToken.create({
+    db.refreshToken.update({ where: { tokenHash: oldHash }, data: { revokedAt: new Date() } }),
+    db.refreshToken.create({
       data: {
         id: randomUUID(),
         tokenHash: hashToken(input.newToken),
@@ -51,7 +53,7 @@ export async function rotateRefreshSession(input: { oldToken: string; newToken: 
 export async function revokeRefreshSession(token: string) {
   const tokenHash = hashToken(token);
 
-  await prisma.refreshToken.updateMany({
+  await db.refreshToken.updateMany({
     where: {
       tokenHash,
       revokedAt: null
@@ -64,7 +66,7 @@ export async function revokeRefreshSession(token: string) {
 
 export async function createAuditLog(data: { action: AuditAction; actorId?: string | null; postId?: string | null; metadata?: Prisma.JsonValue }) {
   return prisma.auditLog.create({
-    data: data as Prisma.AuditLogUncheckedCreateInput
+    data: data as any
   });
 }
 

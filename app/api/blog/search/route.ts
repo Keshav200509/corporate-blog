@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
 import { searchPublishedPosts } from "../../../../src/blog/services/search-service";
 import { logError, logInfo } from "../../../../src/observability/log";
-import { checkRateLimit, getRateLimitKey } from "../../../../src/lib/rate-limit";
 
 export async function GET(request: Request) {
   const requestId = request.headers.get("x-request-id") ?? "unknown";
 
   try {
-    const key = getRateLimitKey(request, "blog-search");
-    if (!checkRateLimit(key, 30, 60 * 1000)) {
-      return NextResponse.json({ message: "Too many requests" }, { status: 429 });
-    }
-
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q") ?? "";
 

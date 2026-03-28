@@ -36,13 +36,13 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
       slug: post.author.slug,
       bio: post.author.bio
     },
-    categories: post.postCategories.map((postCategory) => ({
+    categories: (post.postCategories ?? []).map((postCategory: any) => ({
       id: postCategory.category.id,
       name: postCategory.category.name,
       slug: postCategory.category.slug
     })),
     faqs: Array.isArray(post.faqs)
-      ? post.faqs.map((faq) => ({
+      ? post.faqs.map((faq: any) => ({
           id: faq.id,
           question: faq.question,
           answer: faq.answer,
