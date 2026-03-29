@@ -6,6 +6,10 @@ This project expects environment variables in a `.env.local` file for local deve
 
 ```bash
 cp .env.example .env.local
+
+npm run env:check
+
+
 ```
 
 Then fill in values.
@@ -64,6 +68,21 @@ Examples:
 
 ---
 
+
+## 4) Where to store secrets securely
+
+### Local machine
+- Keep secrets only in `.env.local`.
+- `.env.local` must stay uncommitted and ignored by git (`.gitignore`).
+
+### CI/CD and deployment (Netlify/Cloudflare/Render/Vercel)
+- Store secrets in the platform's Environment Variables / Secret Manager UI.
+- Add these keys at minimum:
+  - `DATABASE_URL`
+  - `JWT_SECRET`
+  - `NEXT_PUBLIC_SITE_URL`
+- After updating variables, trigger a redeploy.
+
 ## 4) Deployment platform setup
 
 For Netlify/Cloudflare/Render/Vercel, define the same keys in project environment settings:
@@ -71,11 +90,28 @@ For Netlify/Cloudflare/Render/Vercel, define the same keys in project environmen
 - `JWT_SECRET`
 - `NEXT_PUBLIC_SITE_URL`
 
+
 Do **not** commit real `.env.local` values.
 
 ---
 
+
+## 5) Verify your env file before deployment
+
+Run:
+
+```bash
+npm run env:check
+```
+
+This checks required keys exist and that `JWT_SECRET` length is valid, without printing secret values.
+
+---
+
+## 6) Future-ready keys (not required yet)
+
 ## 5) Future-ready keys (not required yet)
+
 
 These are placeholders for later growth:
 - `SENTRY_DSN`

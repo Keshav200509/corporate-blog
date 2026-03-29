@@ -28,11 +28,19 @@ jobs:
           npm config delete proxy || true
           npm config delete https-proxy || true
 
+
+      - name: Validate package.json
+        run: npm run check:package-json
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Install dependencies
         run: npm install --include=dev
 
       - name: Check conflict markers
         run: ./scripts/check-conflict-markers.sh
+
 
       - name: Check conflict markers
         run: ./scripts/check-conflict-markers.sh

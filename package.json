@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+
+    "test": "vitest run",
+    "env:check": "./scripts/validate-env.sh .env.local",
+    "check:package-json": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json valid')\""
+
     "test": "vitest run"
+
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
@@ -18,7 +24,10 @@
   "devDependencies": {
 
 
+
+
     "autoprefixer": "^10.4.21",
+
 
     "@types/node": "^22.13.9",
     "@types/react": "^19.0.10",
@@ -26,11 +35,16 @@
     "eslint": "^9.21.0",
     "eslint-config-next": "15.2.3",
 
+
+
+
     "prisma": "^6.6.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9"
   }
 }
+
+
 
     "postcss": "^8.5.6",
     "prisma": "^6.6.0",
@@ -39,4 +53,5 @@
     "vitest": "^3.0.9"
   }
 }
+
 
