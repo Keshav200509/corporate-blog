@@ -34,6 +34,9 @@ jobs:
       - name: Check conflict markers
         run: ./scripts/check-conflict-markers.sh
 
+      - name: Check conflict markers
+        run: ./scripts/check-conflict-markers.sh
+
       - name: Lint
         run: npm run lint
 
