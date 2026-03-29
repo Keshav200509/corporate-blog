@@ -52,10 +52,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedPostBySlug } from "../../../src/blog/data";
-import { getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "../../../src/blog/seo";
-import { listPublishedPostSlugs } from "../../../src/blog/services/post-service";
-import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, buildFaqJsonLd } from "../../../src/blog/structured-data";
+import { getPublishedPostBySlug } from "../../src/blog/data";
+import { getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "../../src/blog/seo";
+import { listPublishedPostSlugs } from "../../src/blog/services/post-service";
+import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, buildFaqJsonLd } from "../../src/blog/structured-data";
 
 export const revalidate = 86400;
 
