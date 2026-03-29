@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { searchPublishedPosts } from "../../../../src/blog/services/search-service";
 import { logError, logInfo } from "../../../../src/observability/log";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const requestId = request.headers.get("x-request-id") ?? "unknown";
 
