@@ -47,7 +47,3 @@ export default function HomePage() {
     </main>
   );
 }
-      </section>
-    </main>
-  );
-}
