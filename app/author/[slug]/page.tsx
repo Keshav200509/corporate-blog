@@ -5,12 +5,14 @@ import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getAuthorWithPosts, listAuthors } from "../../../src/blog/services/author-service";
 
 export async function generateStaticParams() {
-  if (!process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL) return [];
+  try { new URL(process.env.DATABASE_URL); } catch { return []; }
+  try {
+    const authors = await listAuthors();
+    return authors.map((author) => ({ slug: author.slug }));
+  } catch {
     return [];
   }
-
-  const authors = await listAuthors();
-  return authors.map((author) => ({ slug: author.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -19,7 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!author) {
     return { title: `Not Found | ${getSiteName()}` };
   }
-
   return {
     title: `${author.name} | ${getSiteName()}`,
     description: author.bio ?? `Read published articles by ${author.name}.`,
