@@ -1,10 +1,7 @@
 import { prisma } from "../../lib/db/prisma";
+import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import { listPublishedPosts } from "./post-service";
-
-function hasDatabase() {
-  return Boolean(process.env.DATABASE_URL);
-}
 
 export async function listCategories() {
   if (!hasDatabase()) {
