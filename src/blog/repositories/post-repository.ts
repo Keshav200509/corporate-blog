@@ -63,39 +63,44 @@ function buildPublicWhere(filters?: BlogPostFilters): Prisma.PostWhereInput {
 
 export class PostRepository {
   async findPublishedPosts(filters?: BlogPostFilters): Promise<PostWithRelations[]> {
-    return prisma.post.findMany({
-      where: buildPublicWhere(filters),
-      include: postInclude,
-      orderBy: [
-        {
-          publishedAt: "desc"
-        },
-        {
-          updatedAt: "desc"
-        }
-      ]
-    });
+    try {
+      return await prisma.post.findMany({
+        where: buildPublicWhere(filters),
+        include: postInclude,
+        orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }]
+      });
+    } catch {
+      return [];
+    }
   }
 
   async findPublishedPostBySlug(slug: string): Promise<PostWithRelations | null> {
-    return prisma.post.findFirst({
-      where: {
-        slug,
-        ...PUBLIC_POST_WHERE
-      },
-      include: postInclude
-    });
+    try {
+      return await prisma.post.findFirst({
+        where: {
+          slug,
+          ...PUBLIC_POST_WHERE
+        },
+        include: postInclude
+      });
+    } catch {
+      return null;
+    }
   }
 
   async findPublishedPostSlugs(): Promise<Pick<Post, "slug">[]> {
-    return prisma.post.findMany({
-      where: PUBLIC_POST_WHERE,
-      select: {
-        slug: true
-      },
-      orderBy: {
-        publishedAt: "desc"
-      }
-    });
+    try {
+      return await prisma.post.findMany({
+        where: PUBLIC_POST_WHERE,
+        select: {
+          slug: true
+        },
+        orderBy: {
+          publishedAt: "desc"
+        }
+      });
+    } catch {
+      return [];
+    }
   }
 }
