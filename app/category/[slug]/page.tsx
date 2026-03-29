@@ -5,12 +5,14 @@ import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getCategoryWithPosts, listCategories } from "../../../src/blog/services/category-service";
 
 export async function generateStaticParams() {
-  if (!process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL) return [];
+  try { new URL(process.env.DATABASE_URL); } catch { return []; }
+  try {
+    const categories = await listCategories();
+    return categories.map((category) => ({ slug: category.slug }));
+  } catch {
     return [];
   }
-
-  const categories = await listCategories();
-  return categories.map((category) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -19,7 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!category) {
     return { title: `Not Found | ${getSiteName()}` };
   }
-
   return {
     title: `${category.name} | ${getSiteName()}`,
     description: category.description ?? `Read published articles in ${category.name}.`,
