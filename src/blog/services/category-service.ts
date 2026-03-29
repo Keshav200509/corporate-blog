@@ -8,29 +8,33 @@ export async function listCategories() {
     return [];
   }
 
-  return prisma.category.findMany({
-    where: {
-      isActive: true,
-      postCategories: {
-        some: {
-          post: PUBLIC_POST_WHERE
+  try {
+    return await prisma.category.findMany({
+      where: {
+        isActive: true,
+        postCategories: {
+          some: {
+            post: PUBLIC_POST_WHERE
+          }
         }
-      }
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      _count: {
-        select: {
-          postCategories: true
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        _count: {
+          select: {
+            postCategories: true
+          }
         }
+      },
+      orderBy: {
+        name: "asc"
       }
-    },
-    orderBy: {
-      name: "asc"
-    }
-  });
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function getCategoryWithPosts(slug: string) {
@@ -38,27 +42,31 @@ export async function getCategoryWithPosts(slug: string) {
     return null;
   }
 
-  const category = await prisma.category.findUnique({
-    where: {
-      slug,
-      isActive: true
-    },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      description: true
-    }
-  });
+  try {
+    const category = await prisma.category.findUnique({
+      where: {
+        slug,
+        isActive: true
+      },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        description: true
+      }
+    });
 
-  if (!category) {
+    if (!category) {
+      return null;
+    }
+
+    const posts = await listPublishedPosts({ categorySlug: slug });
+
+    return {
+      ...category,
+      posts
+    };
+  } catch {
     return null;
   }
-
-  const posts = await listPublishedPosts({ categorySlug: slug });
-
-  return {
-    ...category,
-    posts
-  };
 }
