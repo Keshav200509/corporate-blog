@@ -22,26 +22,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return staticRoutes;
   }
 
-  const [publishedPosts, categories, authors] = await Promise.all([getPublishedPosts(), listCategories(), listAuthors()]);
+  try {
+    // Validate URL is parseable before hitting Prisma
+    new URL(process.env.DATABASE_URL);
+  } catch {
+    return staticRoutes;
+  }
 
-  const postRoutes = publishedPosts.map((post) => ({
-    url: getCanonicalUrl(`/blog/${post.slug}`),
-    lastModified: post.updatedAt,
-    changeFrequency: "weekly" as const,
-    priority: 0.7
-  }));
+  try {
+    const [publishedPosts, categories, authors] = await Promise.all([
+      getPublishedPosts(),
+      listCategories(),
+      listAuthors()
+    ]);
 
-  const categoryRoutes = categories.map((category) => ({
-    url: getCanonicalUrl(`/category/${category.slug}`),
-    changeFrequency: "daily" as const,
-    priority: 0.6
-  }));
+    const postRoutes = publishedPosts.map((post) => ({
+      url: getCanonicalUrl(`/blog/${post.slug}`),
+      lastModified: post.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7
+    }));
 
-  const authorRoutes = authors.map((author) => ({
-    url: getCanonicalUrl(`/author/${author.slug}`),
-    changeFrequency: "weekly" as const,
-    priority: 0.5
-  }));
+    const categoryRoutes = categories.map((category) => ({
+      url: getCanonicalUrl(`/category/${category.slug}`),
+      changeFrequency: "daily" as const,
+      priority: 0.6
+    }));
 
-  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+    const authorRoutes = authors.map((author) => ({
+      url: getCanonicalUrl(`/author/${author.slug}`),
+      changeFrequency: "weekly" as const,
+      priority: 0.5
+    }));
+
+    return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+  } catch {
+    return staticRoutes;
+  }
 }
