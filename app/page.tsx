@@ -15,25 +15,11 @@ const quickPaths = [
     title: "Meet the authors",
     description: "Explore profiles and all articles by each writer.",
     href: "/author/maya-chen"
-
-
-
-
-
-
-
   },
   {
     title: "Operations readiness",
     description: "Internal launch board for content, security, and publishing checks.",
     href: "/ops/readiness"
-
-
-
-
-
-
-
   }
 ];
 
@@ -47,17 +33,7 @@ export default function HomePage() {
         </p>
       </header>
 
-
       <section className="grid gap-4 md:grid-cols-2">
-
-
-      <section className="grid gap-4 md:grid-cols-2">
-
-      <section className="grid gap-4 md:grid-cols-2">
-
-      <section className="grid gap-4 md:grid-cols-3">
-
-
         {quickPaths.map((path) => (
           <article key={path.href} className="rounded-xl border border-zinc-200 p-5 shadow-sm">
             <h2 className="text-lg font-semibold">{path.title}</h2>
@@ -67,6 +43,10 @@ export default function HomePage() {
             </Link>
           </article>
         ))}
+      </section>
+    </main>
+  );
+}
       </section>
     </main>
   );
