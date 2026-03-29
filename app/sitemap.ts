@@ -6,28 +6,12 @@ import { listCategories } from "../src/blog/services/category-service";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: getCanonicalUrl("/"),
-      changeFrequency: "daily",
-      priority: 0.8
-    },
-    {
-      url: getCanonicalUrl("/blog"),
-      changeFrequency: "hourly",
-      priority: 1
-    }
+    { url: getCanonicalUrl("/"), changeFrequency: "daily", priority: 0.8 },
+    { url: getCanonicalUrl("/blog"), changeFrequency: "hourly", priority: 1 }
   ];
 
-  if (!process.env.DATABASE_URL) {
-    return staticRoutes;
-  }
-
-  try {
-    // Validate URL is parseable before hitting Prisma
-    new URL(process.env.DATABASE_URL);
-  } catch {
-    return staticRoutes;
-  }
+  if (!process.env.DATABASE_URL) return staticRoutes;
+  try { new URL(process.env.DATABASE_URL); } catch { return staticRoutes; }
 
   try {
     const [publishedPosts, categories, authors] = await Promise.all([
