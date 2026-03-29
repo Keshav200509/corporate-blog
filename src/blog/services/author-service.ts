@@ -8,28 +8,32 @@ export async function listAuthors() {
     return [];
   }
 
-  return prisma.user.findMany({
-    where: {
-      isActive: true,
-      posts: {
-        some: PUBLIC_POST_WHERE
-      }
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      bio: true,
-      _count: {
-        select: {
-          posts: true
+  try {
+    return await prisma.user.findMany({
+      where: {
+        isActive: true,
+        posts: {
+          some: PUBLIC_POST_WHERE
         }
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        bio: true,
+        _count: {
+          select: {
+            posts: true
+          }
+        }
+      },
+      orderBy: {
+        name: "asc"
       }
-    },
-    orderBy: {
-      name: "asc"
-    }
-  });
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function getAuthorWithPosts(slug: string) {
@@ -37,27 +41,31 @@ export async function getAuthorWithPosts(slug: string) {
     return null;
   }
 
-  const author = await prisma.user.findUnique({
-    where: {
-      slug,
-      isActive: true
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      bio: true
-    }
-  });
+  try {
+    const author = await prisma.user.findUnique({
+      where: {
+        slug,
+        isActive: true
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        bio: true
+      }
+    });
 
-  if (!author) {
+    if (!author) {
+      return null;
+    }
+
+    const posts = await listPublishedPosts({ authorSlug: slug });
+
+    return {
+      ...author,
+      posts
+    };
+  } catch {
     return null;
   }
-
-  const posts = await listPublishedPosts({ authorSlug: slug });
-
-  return {
-    ...author,
-    posts
-  };
 }
