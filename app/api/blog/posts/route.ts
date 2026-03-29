@@ -6,16 +6,9 @@ export async function GET(request: Request) {
   const category = searchParams.get("category");
   const author = searchParams.get("author");
 
-  const posts = getPublishedPosts().filter((post) => {
-    if (category && post.category.slug !== category) {
-      return false;
-    }
-
-    if (author && post.author.slug !== author) {
-      return false;
-    }
-
-    return true;
+  const posts = await getPublishedPosts({
+    categorySlug: category ?? undefined,
+    authorSlug: author ?? undefined
   });
 
   return NextResponse.json({

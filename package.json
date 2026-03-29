@@ -1,0 +1,30 @@
+{
+  "name": "corporate-blog",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "env:check": "./scripts/validate-env.sh .env.local",
+    "check:package-json": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json valid')\""
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "next": "15.2.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "eslint": "^9.21.0",
+    "eslint-config-next": "15.2.3",
+    "prisma": "^6.6.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  }
+}
