@@ -19,11 +19,17 @@ const quickPaths = [
 
 
 
+
+
+
   },
   {
     title: "Operations readiness",
     description: "Internal launch board for content, security, and publishing checks.",
     href: "/ops/readiness"
+
+
+
 
 
 
@@ -40,6 +46,9 @@ export default function HomePage() {
           A production-style publishing application with draft workflows, role-based publishing controls, and SEO-first pages.
         </p>
       </header>
+
+
+      <section className="grid gap-4 md:grid-cols-2">
 
 
       <section className="grid gap-4 md:grid-cols-2">

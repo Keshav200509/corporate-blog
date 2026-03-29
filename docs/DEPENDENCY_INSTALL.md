@@ -42,6 +42,7 @@ Then run:
 ```bash
 npm ci
 
+
 If `npm install` fails in this environment, the issue is network policy, not project scripts.
 
 ## Why tests/lint/build currently fail
@@ -59,10 +60,16 @@ Without successful `npm install`, these binaries do not exist, so shell errors l
 ```bash
 npm install
 
+
 npm run lint
 npm test
 npm run build
 ```
+
+
+## Reproducibility hardening
+- Commit `package-lock.json`.
+- Use `npm ci` in CI for deterministic installs.
 
 
 ## Reproducibility hardening
