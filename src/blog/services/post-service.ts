@@ -1,6 +1,8 @@
 import type { PostWithRelations } from "../repositories/post-repository";
 import { PostRepository } from "../repositories/post-repository";
 import type { BlogPost, BlogPostFilters, BlogPostStatus } from "../types";
+import { hasDatabase } from "../../lib/db/has-database";
+import { filterDemoPosts, findDemoPostBySlug, listDemoPostSlugs } from "../fallback";
 
 const postRepository = new PostRepository();
 
@@ -55,18 +57,30 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
 }
 
 export async function listPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
+  if (!hasDatabase()) {
+    return filterDemoPosts(filters);
+  }
+
   const posts = await postRepository.findPublishedPosts(filters);
 
   return posts.map((post) => mapToBlogPost(post));
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!hasDatabase()) {
+    return findDemoPostBySlug(slug);
+  }
+
   const post = await postRepository.findPublishedPostBySlug(slug);
 
   return post ? mapToBlogPost(post) : null;
 }
 
 export async function listPublishedPostSlugs(): Promise<string[]> {
+  if (!hasDatabase()) {
+    return listDemoPostSlugs();
+  }
+
   const slugs = await postRepository.findPublishedPostSlugs();
 
   return slugs.map((entry) => entry.slug);
