@@ -1,101 +1,69 @@
-// import Link from "next/link";
-// import { searchPublishedPosts } from "../../src/blog/services/search-service";
+import type { Metadata } from "next";
+import { getCanonicalUrl } from "../../../src/blog/seo";
+import { getReadinessSnapshot } from "../../../src/ops/readiness";
 
-// export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-//   const params = await searchParams;
-//   const query = (params.q ?? "").trim();
+export const dynamic = "force-dynamic";
 
-//   if (!query || query.length < 2) {
-//     return (
-//       <main className="mx-auto max-w-4xl px-6 py-16 text-center">
-//         <h1 className="text-3xl font-bold tracking-tight">Search</h1>
-//         <p className="mt-3 text-zinc-500 dark:text-zinc-400">Enter a search term (at least 2 characters).</p>
-//       </main>
-//     );
-//   }
-
-//   const posts = await searchPublishedPosts(query);
-
-//   return (
-//     <main className="mx-auto max-w-5xl space-y-6 px-6 py-12">
-//       <header>
-//         <h1 className="text-3xl font-bold tracking-tight">Results for &quot;{query}&quot;</h1>
-//         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{posts.length} matching posts</p>
-//       </header>
-
-//       {posts.length === 0 ? (
-//         <section className="rounded-xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-//           <p className="text-zinc-600 dark:text-zinc-300">No posts found for &quot;{query}&quot;.</p>
-//           <Link href="/blog" className="mt-3 inline-block text-sm font-medium underline">
-//             Browse all posts
-//           </Link>
-//         </section>
-//       ) : (
-//         <section className="grid gap-4 md:grid-cols-2" aria-label="Search results">
-//           {posts.map((post) => (
-//             <article key={post.id} className="rounded-xl border border-zinc-200 p-5 shadow-sm dark:border-zinc-800">
-//               <p className="text-xs uppercase tracking-wide text-zinc-500">{post.categories[0]?.name ?? "General"}</p>
-//               <h2 className="mt-2 text-xl font-semibold">
-//                 <Link href={`/blog/${post.slug}`} className="hover:underline">
-//                   {post.title}
-//                 </Link>
-//               </h2>
-//               <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-//             </article>
-//           ))}
-//         </section>
-//       )}
-//     </main>
-//   );
-// }
-
-import Link from "next/link";
-import { searchPublishedPosts } from "../../src/blog/services/search-service";
-
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const params = await searchParams;
-  const query = (params.q ?? "").trim();
-
-  if (!query || query.length < 2) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-16 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Search</h1>
-        <p className="mt-3 text-zinc-500 dark:text-zinc-400">Enter a search term (at least 2 characters).</p>
-      </main>
-    );
+export const metadata: Metadata = {
+  title: "Operations Readiness",
+  description: "Internal launch-readiness dashboard for The Corporate Blog.",
+  alternates: {
+    canonical: getCanonicalUrl("/ops/readiness")
+  },
+  robots: {
+    index: false,
+    follow: false
   }
+};
 
-  const posts = await searchPublishedPosts(query);
+const STATUS_STYLES: Record<string, string> = {
+  pass: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
+  warn: "bg-amber-500/10 text-amber-300 border-amber-500/30",
+  fail: "bg-rose-500/10 text-rose-300 border-rose-500/30"
+};
+
+export default async function OpsReadinessPage() {
+  const snapshot = await getReadinessSnapshot();
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 px-6 py-12">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Results for &quot;{query}&quot;</h1>
-        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{posts.length} matching posts</p>
+    <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-12">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Launch Readiness Control Board</h1>
+        <p className="text-sm text-zinc-400">Generated at: {new Date(snapshot.generatedAt).toLocaleString("en-US", { timeZone: "UTC" })} UTC</p>
       </header>
 
-      {posts.length === 0 ? (
-        <section className="rounded-xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-300">No posts found for &quot;{query}&quot;.</p>
-          <Link href="/blog" className="mt-3 inline-block text-sm font-medium underline">
-            Browse all posts
-          </Link>
-        </section>
-      ) : (
-        <section className="grid gap-4 md:grid-cols-2" aria-label="Search results">
-          {posts.map((post) => (
-            <article key={post.id} className="rounded-xl border border-zinc-200 p-5 shadow-sm dark:border-zinc-800">
-              <p className="text-xs uppercase tracking-wide text-zinc-500">{post.categories[0]?.name ?? "General"}</p>
-              <h2 className="mt-2 text-xl font-semibold">
-                <Link href={`/blog/${post.slug}`} className="hover:underline">
-                  {post.title}
-                </Link>
-              </h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-            </article>
-          ))}
-        </section>
-      )}
+      <section className="grid gap-4 md:grid-cols-2">
+        <article className="rounded-xl border border-zinc-700 p-5">
+          <h2 className="text-sm uppercase tracking-wide text-zinc-400">Overall status</h2>
+          <p className={`mt-3 inline-flex rounded border px-3 py-1 text-sm font-semibold ${STATUS_STYLES[snapshot.overallStatus]}`}>
+            {snapshot.overallStatus.toUpperCase()}
+          </p>
+        </article>
+
+        <article className="rounded-xl border border-zinc-700 p-5">
+          <h2 className="text-sm uppercase tracking-wide text-zinc-400">Core content metrics</h2>
+          <ul className="mt-3 space-y-2 text-sm text-zinc-200">
+            <li>Published posts: {snapshot.metrics.publishedPosts}</li>
+            <li>Draft posts: {snapshot.metrics.drafts}</li>
+            <li>Active categories: {snapshot.metrics.categories}</li>
+            <li>Active authors: {snapshot.metrics.authors}</li>
+            <li>Last publish: {snapshot.metrics.lastPublishAt ?? "No publish yet"}</li>
+          </ul>
+        </article>
+      </section>
+
+      <section className="space-y-3" aria-label="Launch checklist checks">
+        <h2 className="text-xl font-semibold">Automated launch checks</h2>
+        {snapshot.checks.map((check) => (
+          <article key={check.key} className="rounded-xl border border-zinc-700 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="font-medium text-zinc-100">{check.title}</h3>
+              <span className={`rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[check.status]}`}>{check.status.toUpperCase()}</span>
+            </div>
+            <p className="mt-2 text-sm text-zinc-300">{check.detail}</p>
+          </article>
+        ))}
+      </section>
     </main>
   );
 }
