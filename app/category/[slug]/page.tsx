@@ -5,8 +5,6 @@ import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getCategoryWithPosts, listCategories } from "../../../src/blog/services/category-service";
 
 export async function generateStaticParams() {
-  if (!process.env.DATABASE_URL) return [];
-  try { new URL(process.env.DATABASE_URL); } catch { return []; }
   try {
     const categories = await listCategories();
     return categories.map((category) => ({ slug: category.slug }));

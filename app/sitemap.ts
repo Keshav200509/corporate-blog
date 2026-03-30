@@ -10,9 +10,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: getCanonicalUrl("/blog"), changeFrequency: "hourly", priority: 1 }
   ];
 
-  if (!process.env.DATABASE_URL) return staticRoutes;
-  try { new URL(process.env.DATABASE_URL); } catch { return staticRoutes; }
-
   try {
     const [publishedPosts, categories, authors] = await Promise.all([
       getPublishedPosts(),
