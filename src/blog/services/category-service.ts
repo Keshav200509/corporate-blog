@@ -1,11 +1,31 @@
 import { prisma } from "../../lib/db/prisma";
 import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
-import { listPublishedPosts } from "./post-service";
+import { getPublishedPosts } from "../data";
 
 export async function listCategories() {
   if (!hasDatabase()) {
-    return [];
+    const posts = await getPublishedPosts();
+    const categoryMap = new Map<string, { id: string; name: string; slug: string; _count: { postCategories: number } }>();
+
+    for (const post of posts) {
+      for (const category of post.categories) {
+        const existing = categoryMap.get(category.slug);
+        if (existing) {
+          existing._count.postCategories += 1;
+          continue;
+        }
+
+        categoryMap.set(category.slug, {
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+          _count: { postCategories: 1 }
+        });
+      }
+    }
+
+    return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   try {
@@ -39,7 +59,21 @@ export async function listCategories() {
 
 export async function getCategoryWithPosts(slug: string) {
   if (!hasDatabase()) {
-    return null;
+    const posts = await getPublishedPosts({ categorySlug: slug });
+    if (posts.length === 0) {
+      return null;
+    }
+
+    const category = posts.flatMap((post) => post.categories).find((entry) => entry.slug === slug);
+    if (!category) {
+      return null;
+    }
+
+    return {
+      ...category,
+      description: `Published posts tagged with ${category.name}.`,
+      posts
+    };
   }
 
   try {
@@ -60,7 +94,7 @@ export async function getCategoryWithPosts(slug: string) {
       return null;
     }
 
-    const posts = await listPublishedPosts({ categorySlug: slug });
+    const posts = await getPublishedPosts({ categorySlug: slug });
 
     return {
       ...category,
