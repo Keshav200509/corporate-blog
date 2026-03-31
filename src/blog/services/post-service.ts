@@ -61,9 +61,14 @@ export async function listPublishedPosts(filters?: BlogPostFilters): Promise<Blo
     return filterDemoPosts(filters);
   }
 
-  const posts = await postRepository.findPublishedPosts(filters);
+  try {
+    const posts = await postRepository.findPublishedPosts(filters);
+    const mapped = posts.map((post) => mapToBlogPost(post));
 
-  return posts.map((post) => mapToBlogPost(post));
+    return mapped.length > 0 ? mapped : filterDemoPosts(filters);
+  } catch {
+    return filterDemoPosts(filters);
+  }
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -71,9 +76,12 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
     return findDemoPostBySlug(slug);
   }
 
-  const post = await postRepository.findPublishedPostBySlug(slug);
-
-  return post ? mapToBlogPost(post) : null;
+  try {
+    const post = await postRepository.findPublishedPostBySlug(slug);
+    return post ? mapToBlogPost(post) : findDemoPostBySlug(slug);
+  } catch {
+    return findDemoPostBySlug(slug);
+  }
 }
 
 export async function listPublishedPostSlugs(): Promise<string[]> {
@@ -81,7 +89,10 @@ export async function listPublishedPostSlugs(): Promise<string[]> {
     return listDemoPostSlugs();
   }
 
-  const slugs = await postRepository.findPublishedPostSlugs();
-
-  return slugs.map((entry) => entry.slug);
+  try {
+    const slugs = await postRepository.findPublishedPostSlugs();
+    return slugs.length > 0 ? slugs.map((entry) => entry.slug) : listDemoPostSlugs();
+  } catch {
+    return listDemoPostSlugs();
+  }
 }
