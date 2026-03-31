@@ -2,6 +2,13 @@ import { prisma } from "../../lib/db/prisma";
 import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import { getPublishedPosts } from "../data";
+<<<<<<< codex/analyze-code-and-identify-errors-c33k0n
+import { listDemoCategories } from "../fallback";
+
+export async function listCategories() {
+  if (!hasDatabase()) {
+    return listDemoCategories();
+=======
 
 export async function listCategories() {
   if (!hasDatabase()) {
@@ -26,10 +33,11 @@ export async function listCategories() {
     }
 
     return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+>>>>>>> main
   }
 
   try {
-    return await prisma.category.findMany({
+    const categories = await prisma.category.findMany({
       where: {
         isActive: true,
         postCategories: {
@@ -52,8 +60,10 @@ export async function listCategories() {
         name: "asc"
       }
     });
+
+    return categories.length > 0 ? categories : listDemoCategories();
   } catch {
-    return [];
+    return listDemoCategories();
   }
 }
 
@@ -101,6 +111,18 @@ export async function getCategoryWithPosts(slug: string) {
       posts
     };
   } catch {
-    return null;
+    const posts = await getPublishedPosts({ categorySlug: slug });
+    if (posts.length === 0) {
+      return null;
+    }
+
+    const category = posts.flatMap((post) => post.categories).find((entry) => entry.slug === slug);
+    return category
+      ? {
+          ...category,
+          description: `Published posts tagged with ${category.name}.`,
+          posts
+        }
+      : null;
   }
 }
