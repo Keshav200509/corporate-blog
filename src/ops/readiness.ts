@@ -130,39 +130,65 @@ export async function getReadinessSnapshot(): Promise<ReadinessSnapshot> {
     };
   }
 
-  const [publishedPosts, drafts, categories, authors, latestPublishedPost] = await Promise.all([
-    prisma.post.count({ where: { status: PostStatus.PUBLISHED, publishedAt: { not: null } } }),
-    prisma.post.count({ where: { status: PostStatus.DRAFT } }),
-    prisma.category.count({ where: { isActive: true } }),
-    prisma.user.count({ where: { isActive: true } }),
-    prisma.post.findFirst({ where: { status: PostStatus.PUBLISHED, publishedAt: { not: null } }, orderBy: { publishedAt: "desc" } })
-  ]);
+  try {
+    const [publishedPosts, drafts, categories, authors, latestPublishedPost] = await Promise.all([
+      prisma.post.count({ where: { status: PostStatus.PUBLISHED, publishedAt: { not: null } } }),
+      prisma.post.count({ where: { status: PostStatus.DRAFT } }),
+      prisma.category.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { isActive: true } }),
+      prisma.post.findFirst({ where: { status: PostStatus.PUBLISHED, publishedAt: { not: null } }, orderBy: { publishedAt: "desc" } })
+    ]);
 
-  const hasRecentPublishActivity = latestPublishedPost?.publishedAt
-    ? Date.now() - latestPublishedPost.publishedAt.getTime() < 1000 * 60 * 60 * 24 * 30
-    : false;
+    const hasRecentPublishActivity = latestPublishedPost?.publishedAt
+      ? Date.now() - latestPublishedPost.publishedAt.getTime() < 1000 * 60 * 60 * 24 * 30
+      : false;
 
-  const checks = evaluateReadinessChecks({
-    hasDatabaseUrl,
-    hasJwtSecret,
-    hasPublicSiteUrl,
-    publishedPosts,
-    drafts,
-    categories,
-    authors,
-    hasRecentPublishActivity
-  });
-
-  return {
-    generatedAt: new Date().toISOString(),
-    overallStatus: summarizeOverallStatus(checks),
-    checks,
-    metrics: {
+    const checks = evaluateReadinessChecks({
+      hasDatabaseUrl,
+      hasJwtSecret,
+      hasPublicSiteUrl,
       publishedPosts,
       drafts,
       categories,
       authors,
-      lastPublishAt: latestPublishedPost?.publishedAt?.toISOString() ?? null
-    }
+      hasRecentPublishActivity
+    });
+
+    return {
+      generatedAt: new Date().toISOString(),
+      overallStatus: summarizeOverallStatus(checks),
+      checks,
+      metrics: {
+        publishedPosts,
+        drafts,
+        categories,
+        authors,
+        lastPublishAt: latestPublishedPost?.publishedAt?.toISOString() ?? null
+      }
+    };
+  } catch {
+    const checks = evaluateReadinessChecks({
+      hasDatabaseUrl: false,
+      hasJwtSecret,
+      hasPublicSiteUrl,
+      publishedPosts: 0,
+      drafts: 0,
+      categories: 0,
+      authors: 0,
+      hasRecentPublishActivity: false
+    });
+
+    return {
+      generatedAt: new Date().toISOString(),
+      overallStatus: summarizeOverallStatus(checks),
+      checks,
+      metrics: {
+        publishedPosts: 0,
+        drafts: 0,
+        categories: 0,
+        authors: 0,
+        lastPublishAt: null
+      }
+    };
   };
 }

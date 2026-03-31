@@ -7,11 +7,10 @@ import { listCategories } from "../src/blog/services/category-service";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: getCanonicalUrl("/"), changeFrequency: "daily", priority: 0.8 },
-    { url: getCanonicalUrl("/blog"), changeFrequency: "hourly", priority: 1 }
+    { url: getCanonicalUrl("/blog"), changeFrequency: "hourly", priority: 1 },
+    { url: getCanonicalUrl("/author"), changeFrequency: "weekly", priority: 0.6 },
+    { url: getCanonicalUrl("/category"), changeFrequency: "weekly", priority: 0.6 }
   ];
-
-  if (!process.env.DATABASE_URL) return staticRoutes;
-  try { new URL(process.env.DATABASE_URL); } catch { return staticRoutes; }
 
   try {
     const [publishedPosts, categories, authors] = await Promise.all([
