@@ -7,6 +7,29 @@ import { listDemoAuthors } from "../fallback";
 export async function listAuthors() {
   if (!hasDatabase()) {
     return listDemoAuthors();
+
+export async function listAuthors() {
+  if (!hasDatabase()) {
+    const posts = await getPublishedPosts();
+    const authorMap = new Map<string, { id: string; name: string; slug: string; bio: string | null; _count: { posts: number } }>();
+
+    for (const post of posts) {
+      const existing = authorMap.get(post.author.slug);
+      if (existing) {
+        existing._count.posts += 1;
+        continue;
+      }
+
+      authorMap.set(post.author.slug, {
+        id: post.author.id,
+        name: post.author.name,
+        slug: post.author.slug,
+        bio: post.author.bio,
+        _count: { posts: 1 }
+      });
+    }
+
+    return Array.from(authorMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   try {
