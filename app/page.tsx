@@ -9,12 +9,12 @@ const quickPaths = [
   {
     title: "Browse by category",
     description: "Find content grouped by topic.",
-    href: "/category/engineering"
+    href: "/category"
   },
   {
     title: "Meet the authors",
     description: "Explore profiles and all articles by each writer.",
-    href: "/author/maya-chen"
+    href: "/author"
   },
   {
     title: "Operations readiness",
