@@ -7,6 +7,30 @@ import { listDemoCategories } from "../fallback";
 export async function listCategories() {
   if (!hasDatabase()) {
     return listDemoCategories();
+
+export async function listCategories() {
+  if (!hasDatabase()) {
+    const posts = await getPublishedPosts();
+    const categoryMap = new Map<string, { id: string; name: string; slug: string; _count: { postCategories: number } }>();
+
+    for (const post of posts) {
+      for (const category of post.categories) {
+        const existing = categoryMap.get(category.slug);
+        if (existing) {
+          existing._count.postCategories += 1;
+          continue;
+        }
+
+        categoryMap.set(category.slug, {
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+          _count: { postCategories: 1 }
+        });
+      }
+    }
+
+    return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   try {
