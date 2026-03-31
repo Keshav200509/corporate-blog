@@ -29,7 +29,7 @@ export function buildArticleJsonLd(post: BlogPost) {
     author: {
       "@type": "Person",
       name: post.author.name,
-      url: getCanonicalUrl(`/blog/author/${post.author.slug}`)
+      url: getCanonicalUrl(`/author/${post.author.slug}`)
     },
     mainEntityOfPage: canonical,
     publisher: {
