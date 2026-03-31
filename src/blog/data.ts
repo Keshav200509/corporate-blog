@@ -1,5 +1,7 @@
 import type { BlogPost, BlogPostFilters } from "./types";
 import { getPublishedPostBySlug as getPublishedPostBySlugFromService, listPublishedPosts } from "./services/post-service";
+
+export async function getPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
 import { hasDatabase } from "../lib/db/has-database";
 import { DEMO_POSTS } from "./demo-content";
 

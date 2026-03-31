@@ -2,6 +2,11 @@ import { prisma } from "../../lib/db/prisma";
 import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import { getPublishedPosts } from "../data";
+import { listDemoAuthors } from "../fallback";
+
+export async function listAuthors() {
+  if (!hasDatabase()) {
+    return listDemoAuthors();
 
 export async function listAuthors() {
   if (!hasDatabase()) {
@@ -28,7 +33,7 @@ export async function listAuthors() {
   }
 
   try {
-    return await prisma.user.findMany({
+    const authors = await prisma.user.findMany({
       where: {
         isActive: true,
         posts: {
@@ -50,8 +55,10 @@ export async function listAuthors() {
         name: "asc"
       }
     });
+
+    return authors.length > 0 ? authors : listDemoAuthors();
   } catch {
-    return [];
+    return listDemoAuthors();
   }
 }
 
@@ -98,6 +105,12 @@ export async function getAuthorWithPosts(slug: string) {
       posts
     };
   } catch {
-    return null;
+    const posts = await getPublishedPosts({ authorSlug: slug });
+    if (posts.length === 0) {
+      return null;
+    }
+
+    const author = posts[0]?.author;
+    return author ? { ...author, posts } : null;
   }
 }
