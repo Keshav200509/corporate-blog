@@ -7,6 +7,8 @@ import { listDemoAuthors } from "../fallback";
 export async function listAuthors() {
   if (!hasDatabase()) {
     return listDemoAuthors();
+<<<<<<< HEAD
+=======
 
 export async function listAuthors() {
   if (!hasDatabase()) {
@@ -30,6 +32,7 @@ export async function listAuthors() {
     }
 
     return Array.from(authorMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+>>>>>>> origin/main
   }
 
   try {

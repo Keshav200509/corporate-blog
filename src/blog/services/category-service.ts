@@ -2,12 +2,17 @@ import { prisma } from "../../lib/db/prisma";
 import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import { getPublishedPosts } from "../data";
+<<<<<<< HEAD
+=======
 <<<<<<< codex/analyze-code-and-identify-errors-c33k0n
+>>>>>>> origin/main
 import { listDemoCategories } from "../fallback";
 
 export async function listCategories() {
   if (!hasDatabase()) {
     return listDemoCategories();
+<<<<<<< HEAD
+=======
 =======
 
 export async function listCategories() {
@@ -34,6 +39,7 @@ export async function listCategories() {
 
     return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 >>>>>>> main
+>>>>>>> origin/main
   }
 
   try {

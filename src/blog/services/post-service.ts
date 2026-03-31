@@ -3,9 +3,12 @@ import { PostRepository } from "../repositories/post-repository";
 import type { BlogPost, BlogPostFilters, BlogPostStatus } from "../types";
 import { hasDatabase } from "../../lib/db/has-database";
 import { filterDemoPosts, findDemoPostBySlug, listDemoPostSlugs } from "../fallback";
+<<<<<<< HEAD
+=======
 import { DEMO_POSTS } from "../demo-content";
 import { hasDatabase } from "../../lib/db/has-database";
 
+>>>>>>> origin/main
 
 const postRepository = new PostRepository();
 
@@ -63,6 +66,12 @@ export async function listPublishedPosts(filters?: BlogPostFilters): Promise<Blo
   if (!hasDatabase()) {
     return filterDemoPosts(filters);
   }
+<<<<<<< HEAD
+
+  try {
+    const posts = await postRepository.findPublishedPosts(filters);
+    const mapped = posts.map((post) => mapToBlogPost(post));
+=======
 
   try {
     const posts = await postRepository.findPublishedPosts(filters);
@@ -79,6 +88,7 @@ export async function listPublishedPosts(filters?: BlogPostFilters): Promise<Blo
 
   const posts = await postRepository.findPublishedPosts(filters);
 
+>>>>>>> origin/main
 
     return mapped.length > 0 ? mapped : filterDemoPosts(filters);
   } catch {
@@ -90,6 +100,9 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
   if (!hasDatabase()) {
     return findDemoPostBySlug(slug);
   }
+<<<<<<< HEAD
+
+=======
 
     return DEMO_POSTS.find((post) => post.slug === slug) ?? null;
   }
@@ -97,6 +110,7 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
   const post = await postRepository.findPublishedPostBySlug(slug);
 
 
+>>>>>>> origin/main
   try {
     const post = await postRepository.findPublishedPostBySlug(slug);
     return post ? mapToBlogPost(post) : findDemoPostBySlug(slug);
@@ -109,6 +123,9 @@ export async function listPublishedPostSlugs(): Promise<string[]> {
   if (!hasDatabase()) {
     return listDemoPostSlugs();
   }
+<<<<<<< HEAD
+
+=======
 
     return DEMO_POSTS.map((post) => post.slug);
   }
@@ -116,6 +133,7 @@ export async function listPublishedPostSlugs(): Promise<string[]> {
   const slugs = await postRepository.findPublishedPostSlugs();
 
 
+>>>>>>> origin/main
   try {
     const slugs = await postRepository.findPublishedPostSlugs();
     return slugs.length > 0 ? slugs.map((entry) => entry.slug) : listDemoPostSlugs();

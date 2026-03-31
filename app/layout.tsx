@@ -16,8 +16,11 @@ const navigationLinks = [
   { href: "/blog", label: "Blog" },
   { href: "/category", label: "Categories" },
   { href: "/author", label: "Authors" },
+<<<<<<< HEAD
+=======
   { href: "/category/engineering", label: "Categories" },
   { href: "/author/maya-chen", label: "Authors" },
+>>>>>>> origin/main
   { href: "/ops/readiness", label: "Readiness" }
 ];
 

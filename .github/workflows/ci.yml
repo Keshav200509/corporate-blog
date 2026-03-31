@@ -36,6 +36,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
+<<<<<<< HEAD
+
+      - name: Verify locked framework versions
+        run: npm run check:deps
+=======
+>>>>>>> origin/main
 
       - name: Check conflict markers
         run: ./scripts/check-conflict-markers.sh
