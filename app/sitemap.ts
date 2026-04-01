@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: getCanonicalUrl("/"), changeFrequency: "daily", priority: 0.8 },
     { url: getCanonicalUrl("/blog"), changeFrequency: "hourly", priority: 1 },
+    { url: getCanonicalUrl("/explore"), changeFrequency: "daily", priority: 0.8 },
     { url: getCanonicalUrl("/author"), changeFrequency: "weekly", priority: 0.6 },
     { url: getCanonicalUrl("/category"), changeFrequency: "weekly", priority: 0.6 }
   ];
