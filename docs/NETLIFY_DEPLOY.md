@@ -6,9 +6,9 @@ This project is configured for Next.js deployment on Netlify.
 
 If Netlify UI asks:
 
-- Build command: `npm ci && npm run build:netlify`
+- Build command: `npm ci --no-audit --no-fund && npm run build:netlify`
 - Publish directory: `.next`
-- Node version: `22`
+- Node version: `20`
 
 These are also codified in `netlify.toml`.
 
@@ -27,9 +27,10 @@ Notes:
 ## 3) Pre-deploy local verification
 
 ```bash
-npm ci
+npm ci --no-audit --no-fund
 npm run check:package-json
-npm run lint
+npm run check:deps
+./scripts/check-conflict-markers.sh
 npm test
 npm run build
 ```
@@ -40,21 +41,20 @@ Optional single command:
 npm run verify
 ```
 
-## 4) If Netlify shows EJSONPARSE
+## 4) If Netlify deploy preview fails quickly (under ~1 minute)
 
-It means `package.json` is invalid JSON.
+Most common causes:
+
+1. Conflict markers were committed (`<<<<<<<`, `=======`, `>>>>>>>`).
+2. `package.json` / `package-lock.json` framework versions drifted.
+3. Netlify Node version differs from repo standard.
 
 Use:
 
 ```bash
 npm run check:package-json
-```
-
-If invalid, restore file and re-check:
-
-```bash
-git checkout -- package.json
-npm run check:package-json
+npm run check:deps
+./scripts/check-conflict-markers.sh
 ```
 
 ## 5) Trigger deploy
