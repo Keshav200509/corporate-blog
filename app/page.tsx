@@ -10,6 +10,12 @@ type OverviewResponse = {
 
 export const dynamic = "force-dynamic";
 
+const quickPaths = [
+  { href: "/blog", label: "Read latest posts" },
+  { href: "/search", label: "Run strategic search" },
+  { href: "/explore", label: "Explore workflows" }
+];
+
 export default async function HomePage() {
   const overview = await fetchApiJson<OverviewResponse>("/api/blog/overview");
 
@@ -21,8 +27,15 @@ export default async function HomePage() {
           <h1 className="text-4xl font-bold leading-tight md:text-6xl">A living newsroom for strategy, operations, and market shifts.</h1>
           <p className="max-w-xl text-slate-300">Real posts, real authors, and real taxonomy pulled through the internal API so every surface reflects current data.</p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/blog" className="rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-slate-950">Read latest posts</Link>
-            <Link href="/search" className="rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold">Run strategic search</Link>
+            {quickPaths.map((item, index) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={index === 0 ? "rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-slate-950" : "rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold"}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3 rounded-xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur">

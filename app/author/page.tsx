@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { fetchApiJson } from "../../src/blog/api";
 import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Authors | ${getSiteName()}`,
   description: "Meet the writers behind The Corporate Blog.",

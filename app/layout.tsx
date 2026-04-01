@@ -20,6 +20,12 @@ const navigationLinks = [
   { href: "/ops/readiness", label: "Readiness" }
 ];
 
+const trendingItems = [
+  "The Sovereignty of Silicon: Deep-dive in tech diplomacy",
+  "Q3 Fiscal Outlook: Why central banks are holding steady",
+  "Decentralized Power: The rise of micro-grids in emerging markets"
+];
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -59,9 +65,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="border-t border-slate-200 bg-slate-950/95 py-2 text-xs text-slate-300">
             <div className="mx-auto flex w-full max-w-7xl gap-8 overflow-hidden whitespace-nowrap px-6">
               <span className="font-semibold text-white">● Trending</span>
-              <span>The Sovereignty of Silicon: Deep-dive in tech diplomacy</span>
-              <span>Q3 Fiscal Outlook: Why central banks are holding steady</span>
-              <span>Decentralized Power: The rise of micro-grids in emerging markets</span>
+              {trendingItems.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
             </div>
           </div>
         </header>

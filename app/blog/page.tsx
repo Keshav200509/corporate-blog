@@ -4,6 +4,7 @@ import { fetchApiJson } from "../../src/blog/api";
 import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 type PostsResponse = {
   items: Array<{ id: string; slug: string; title: string; excerpt: string; author: { name: string }; categories: Array<{ name: string }>; publishedAt: string | null }>;
