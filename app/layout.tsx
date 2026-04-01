@@ -22,11 +22,16 @@ const navigationLinks = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+<<<<<<< codex/analyze-code-and-identify-errors-3tlzvb
       <body className="bg-slate-100 text-slate-900 antialiased">
+=======
+      <body>
+>>>>>>> main
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:bg-indigo-600 focus:px-3 focus:py-2 focus:text-white">
           Skip to content
         </a>
 
+<<<<<<< codex/analyze-code-and-identify-errors-3tlzvb
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-slate-100/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4">
             <Link href="/" className="text-2xl font-semibold tracking-tight text-slate-950">
@@ -36,11 +41,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <nav aria-label="Main" className="hidden gap-6 text-sm font-medium text-slate-600 md:flex">
               {navigationLinks.map((link) => (
                 <Link key={link.href} href={link.href} className="transition hover:text-slate-950">
+=======
+        <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
+            <Link href="/" className="text-lg font-semibold tracking-tight">
+              The Corporate Blog
+            </Link>
+
+            <nav aria-label="Main" className="hidden gap-5 text-sm text-zinc-600 md:flex dark:text-zinc-300">
+              {navigationLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="hover:text-zinc-900 dark:hover:text-white">
+>>>>>>> main
                   {link.label}
                 </Link>
               ))}
             </nav>
 
+<<<<<<< codex/analyze-code-and-identify-errors-3tlzvb
             <div className="flex items-center gap-3">
               <form action="/search" className="hidden items-center gap-2 md:flex">
                 <input
@@ -62,11 +79,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span>Q3 Fiscal Outlook: Why central banks are holding steady</span>
               <span>Decentralized Power: The rise of micro-grids in emerging markets</span>
             </div>
+=======
+            <form action="/search" className="hidden items-center gap-2 md:flex">
+              <input
+                name="q"
+                type="search"
+                required
+                minLength={2}
+                placeholder="Search posts"
+                className="w-44 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-indigo-500 transition focus:ring-2 dark:border-zinc-700 dark:bg-zinc-900"
+              />
+              <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">
+                Search
+              </button>
+            </form>
+>>>>>>> main
           </div>
         </header>
 
         <div id="main-content">{children}</div>
 
+<<<<<<< codex/analyze-code-and-identify-errors-3tlzvb
         <footer className="mt-20 border-t border-slate-200 bg-white">
           <div className="mx-auto grid w-full max-w-7xl gap-8 px-6 py-12 md:grid-cols-4">
             <div>
@@ -102,6 +135,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
           <p className="border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500">© {new Date().getFullYear()} The Corporate Blog. All intellectual property reserved.</p>
+=======
+        <footer className="mt-16 border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-8 text-sm text-zinc-500 dark:text-zinc-400">
+            <p>© {new Date().getFullYear()} {getSiteName()}. SEO-first publishing platform.</p>
+            <p>Built for performance, editorial velocity, and scalable growth.</p>
+          </div>
+>>>>>>> main
         </footer>
       </body>
     </html>
