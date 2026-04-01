@@ -41,7 +41,9 @@ jobs:
         run: npm run check:deps
 
       - name: Check conflict markers
-        run: ./scripts/check-conflict-markers.sh
+        run: |
+          chmod +x ./scripts/check-conflict-markers.sh
+          ./scripts/check-conflict-markers.sh
 
       - name: Lint
         run: npm run lint

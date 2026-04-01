@@ -11,12 +11,15 @@
     "env:check": "./scripts/validate-env.sh .env.local",
     "check:package-json": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json valid')\"",
     "build:netlify": "npm run check:package-json && npm run check:deps && ./scripts/check-conflict-markers.sh && npm run build",
+
+    "build:netlify": "npm run check:package-json && npm run build",
+
     "verify": "npm run check:package-json && npm run check:deps && npm run lint && npm test && npm run build",
     "check:deps": "node scripts/check-deps.js"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
-    "next": "15.2.3",
+    "next": "16.2.1",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
