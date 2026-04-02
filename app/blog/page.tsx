@@ -30,6 +30,8 @@ export default async function BlogIndexPage() {
   ]);
 
   const lead = postsData.items[0];
+  const posts = await getPublishedPosts();
+  const lead = posts[0];
 
   return (
     <main className="mx-auto max-w-7xl space-y-10 px-6 py-10">
@@ -38,6 +40,9 @@ export default async function BlogIndexPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Live Intelligence Feed</p>
           <h1 className="mt-3 text-5xl font-semibold leading-tight">Editorial command deck powered by API data.</h1>
           <p className="mt-4 max-w-xl text-slate-300">This index hydrates through /api/blog/posts and /api/blog/categories to keep the front page aligned with the latest records.</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Featured Deep Dive</p>
+          <h1 className="mt-3 text-5xl font-semibold leading-tight">The Sovereign Ledger: Global Liquidity in 2025</h1>
+          <p className="mt-4 max-w-xl text-slate-300">An institutional analysis of decentralized finance architectures and macro policy responses.</p>
           {lead ? (
             <Link href={`/blog/${lead.slug}`} className="mt-6 inline-block rounded bg-white px-5 py-2.5 text-sm font-semibold text-slate-950">
               Read Lead Story
@@ -61,6 +66,18 @@ export default async function BlogIndexPage() {
       ) : (
         <section className="grid gap-5 md:grid-cols-3" aria-label="Published posts">
           {postsData.items.map((post) => (
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Executive Brief</p>
+          <p className="text-sm text-slate-300">Join 45,000+ leaders receiving our weekly synthesis of high-impact shifts.</p>
+          <input className="w-full rounded border border-white/20 bg-white/5 px-3 py-2 text-sm" placeholder="Professional email" />
+          <button className="w-full rounded bg-white px-4 py-2 text-sm font-semibold text-slate-950">Subscribe Now</button>
+        </aside>
+      </section>
+
+      {posts.length === 0 ? (
+        <section className="rounded-xl border border-dashed border-slate-300 p-10 text-center text-slate-600">No published posts yet.</section>
+      ) : (
+        <section className="grid gap-5 md:grid-cols-3" aria-label="Published posts">
+          {posts.map((post) => (
             <article key={post.id} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{post.categories[0]?.name ?? "General"}</p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight">
