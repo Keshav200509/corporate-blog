@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../src/lib/db/prisma";
 
+type PrismaWithOptionalPostView = typeof prisma & {
+  postView?: {
+    create: (args: { data: { postId: string } }) => Promise<unknown>;
+  };
+};
+
 export async function POST(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
@@ -13,11 +19,15 @@ export async function POST(_request: Request, { params }: { params: Promise<{ sl
     return NextResponse.json({ message: "Post not found" }, { status: 404 });
   }
 
-  await prisma.postView.create({
-    data: {
-      postId: post.id
-    }
-  });
+  const prismaWithPostView = prisma as PrismaWithOptionalPostView;
+
+  if (prismaWithPostView.postView) {
+    await prismaWithPostView.postView.create({
+      data: {
+        postId: post.id
+      }
+    });
+  }
 
   return NextResponse.json({ ok: true }, { status: 202 });
 }

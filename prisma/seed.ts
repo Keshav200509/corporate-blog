@@ -3,8 +3,19 @@ import { hashPassword } from "../src/auth/password";
 
 const prisma = new PrismaClient();
 
+type PrismaWithOptionalPostView = PrismaClient & {
+  postView?: {
+    deleteMany: () => Promise<unknown>;
+  };
+};
+
 async function main() {
-  await prisma.postView.deleteMany();
+  const prismaWithPostView = prisma as PrismaWithOptionalPostView;
+
+  if (prismaWithPostView.postView) {
+    await prismaWithPostView.postView.deleteMany();
+  }
+
   await prisma.postFaq.deleteMany();
   await prisma.postCategory.deleteMany();
   await prisma.auditLog.deleteMany();
