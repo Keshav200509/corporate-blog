@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getAuthorWithPosts, listAuthors } from "../../../src/blog/services/author-service";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   try {
     const authors = await listAuthors();

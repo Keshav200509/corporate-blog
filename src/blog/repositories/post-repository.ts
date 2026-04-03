@@ -3,6 +3,7 @@ import { prisma } from "../../lib/db/prisma";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import type { BlogPostFilters } from "../types";
 
+const postInclude = {
 export type PostWithRelations = any;
 
 const postInclude: any = {
@@ -17,6 +18,11 @@ const postInclude: any = {
       sortOrder: "asc"
     }
   }
+} satisfies Prisma.PostInclude;
+
+export type PostWithRelations = Prisma.PostGetPayload<{
+  include: typeof postInclude;
+}>;
 };
 
 function buildPublicWhere(filters?: BlogPostFilters): Prisma.PostWhereInput {

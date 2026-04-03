@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { searchPublishedPosts } from "../../src/blog/services/search-service";
-
 function SearchForm({ query }: { query: string }) {
   return (
     <form action="/search" className="flex w-full max-w-xl flex-col gap-3 sm:flex-row">
@@ -19,13 +18,15 @@ function SearchForm({ query }: { query: string }) {
     </form>
   );
 }
-
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const params = await searchParams;
   const query = (params.q ?? "").trim();
 
   if (!query || query.length < 2) {
     return (
+      <main className="mx-auto max-w-4xl px-6 py-16 text-center">
+        <h1 className="text-3xl font-bold tracking-tight">Search</h1>
+        <p className="mt-3 text-zinc-500 dark:text-zinc-400">Enter a search term (at least 2 characters).</p>
       <main className="mx-auto max-w-4xl space-y-6 px-6 py-16 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Search</h1>
         <p className="text-zinc-500 dark:text-zinc-400">Enter a search term (at least 2 characters) to discover relevant articles.</p>
@@ -40,6 +41,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <main className="mx-auto max-w-5xl space-y-6 px-6 py-12">
+      <header>
+        <h1 className="text-3xl font-bold tracking-tight">Results for &quot;{query}&quot;</h1>
+        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{posts.length} matching posts</p>
       <header className="space-y-3">
         <h1 className="text-3xl font-bold tracking-tight">Results for &quot;{query}&quot;</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{posts.length} matching post{posts.length === 1 ? "" : "s"}</p>
@@ -56,6 +60,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       ) : (
         <section className="grid gap-4 md:grid-cols-2" aria-label="Search results">
           {posts.map((post) => (
+            <article key={post.id} className="rounded-xl border border-zinc-200 p-5 shadow-sm dark:border-zinc-800">
             <article key={post.id} className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <p className="text-xs uppercase tracking-wide text-zinc-500">{post.categories[0]?.name ?? "General"}</p>
               <h2 className="mt-2 text-xl font-semibold">

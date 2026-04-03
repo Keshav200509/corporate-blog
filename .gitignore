@@ -1,3 +1,13 @@
+
+# dependencies
+/node_modules
+
+# next.js build output
+/.next
+/out
+
+# production
+/build
 # dependencies / build artifacts
 node_modules/
 .next/
@@ -15,6 +25,22 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+
+# env files
+.env*
+!.env.example
+
+# testing
+/coverage
+
+# local misc
+.DS_Store
+*.pem
+
+# prisma
+/prisma/dev.db
+/prisma/dev.db-journal
 
 # OS / editor
 .DS_Store
