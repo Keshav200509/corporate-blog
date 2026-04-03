@@ -1,7 +1,10 @@
+
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listCategories } from "../../src/blog/services/category-service";
 import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `Categories | ${getSiteName()}`,
@@ -28,13 +31,18 @@ export default async function CategoryIndexPage() {
       ) : (
         <section className="grid gap-4 md:grid-cols-3" aria-label="Category list">
           {categories.map((category) => (
-            <article key={category.id} className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <article
+              key={category.id}
+              className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+            >
               <h2 className="text-lg font-semibold">
                 <Link href={`/category/${category.slug}`} className="hover:underline">
                   {category.name}
                 </Link>
               </h2>
-              <p className="mt-3 text-xs uppercase tracking-wide text-zinc-500">{category._count.postCategories} post{category._count.postCategories === 1 ? "" : "s"}</p>
+              <p className="mt-3 text-xs uppercase tracking-wide text-zinc-500">
+                {category._count.postCategories} post{category._count.postCategories === 1 ? "" : "s"}
+              </p>
             </article>
           ))}
         </section>

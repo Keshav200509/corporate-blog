@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { listAuthors } from "../../src/blog/services/author-service";
 import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Authors | ${getSiteName()}`,
   description: "Meet the writers behind The Corporate Blog.",
@@ -35,7 +37,9 @@ export default async function AuthorIndexPage() {
                 </Link>
               </h2>
               <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{author.bio ?? "Corporate blog contributor"}</p>
-              <p className="mt-3 text-xs uppercase tracking-wide text-zinc-500">{author._count.posts} published post{author._count.posts === 1 ? "" : "s"}</p>
+              <p className="mt-3 text-xs uppercase tracking-wide text-zinc-500">
+                {author._count.posts} published post{author._count.posts === 1 ? "" : "s"}
+              </p>
             </article>
           ))}
         </section>
