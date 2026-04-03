@@ -1,12 +1,37 @@
 import { NextResponse } from "next/server";
+import { PostStatus } from "@prisma/client";
 import { requireRole } from "../../../../src/auth/access-control";
-import { createAuditLog, createDraftPost } from "../../../../src/auth/repositories";
+import { createAuditLog, createDraftPost, listPostsForCms } from "../../../../src/auth/repositories";
 import { createDraftSchema } from "../../../../src/auth/validation";
+import { checkRateLimit } from "../../../../src/lib/rate-limit";
+
+export async function GET(request: Request) {
+  const auth = requireRole(request, "WRITER");
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const { searchParams } = new URL(request.url);
+  const status = searchParams.get("status");
+  const normalizedStatus =
+    status === "DRAFT" || status === "PUBLISHED" || status === "ARCHIVED" ? (status as PostStatus) : undefined;
+
+  const posts = await listPostsForCms({
+    authorId: auth.role === "WRITER" ? auth.userId : undefined,
+    status: normalizedStatus
+  });
+
+  return NextResponse.json({ items: posts, total: posts.length });
+}
 
 export async function POST(request: Request) {
   const auth = requireRole(request, "WRITER");
   if (auth instanceof NextResponse) {
     return auth;
+  }
+
+  if (!checkRateLimit(`user:${auth.userId}:cms-create`, 20, 60 * 60 * 1000)) {
+    return NextResponse.json({ message: "Too many requests" }, { status: 429 });
   }
 
   const parsed = createDraftSchema.safeParse(await request.json());
