@@ -9,9 +9,13 @@ import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, b
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  if (!process.env.DATABASE_URL) {
+  try {
+    const slugs = await listPublishedPostSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
     return [];
   }
+}
 
   const slugs = await listPublishedPostSlugs();
   return slugs.map((slug) => ({ slug }));
@@ -48,6 +52,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title,
       description
     }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
+  if (!post) {
+    return { title: `Not Found | ${getSiteName()}` };
+  }
+  const title = getPostTitle(post);
+  const description = getPostDescription(post);
+  const canonical = getCanonicalUrl(`/blog/${post.slug}`);
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, type: "article" },
+    twitter: { card: "summary_large_image", title, description }
   };
 }
 
@@ -59,6 +78,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
+  if (!post) {
+    notFound();
+  }
   const articleJsonLd = buildArticleEnhancedJsonLd(post);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(post);
   const authorJsonLd = buildAuthorJsonLd(post);
@@ -73,6 +95,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <article className="space-y-5">
         <header className="space-y-3">
           <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-400">
+      <article className="space-y-5">
+        <header className="space-y-3">
+          <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             {post.categories.map((category) => (
               <Link key={category.id} href={`/category/${category.slug}`} className="hover:underline">
                 {category.name}
@@ -83,6 +108,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
           <p className="text-sm text-zinc-300">{post.excerpt}</p>
           <p className="text-sm text-zinc-400">
+          <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             By{" "}
             <Link href={`/author/${post.author.slug}`} className="hover:underline">
               {post.author.name}
@@ -91,6 +119,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </header>
 
         <div className="space-y-4 text-zinc-200">
+        <div className="space-y-4 text-zinc-700 dark:text-zinc-200">
           {post.content.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
@@ -108,7 +137,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </section>
         ) : null}
       </article>
-
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(authorJsonLd) }} />

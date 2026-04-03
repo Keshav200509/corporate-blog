@@ -1,6 +1,8 @@
 import type { PostWithRelations } from "../repositories/post-repository";
 import { PostRepository } from "../repositories/post-repository";
 import type { BlogPost, BlogPostFilters, BlogPostStatus } from "../types";
+import { hasDatabase } from "../../lib/db/has-database";
+import { filterDemoPosts, findDemoPostBySlug, listDemoPostSlugs } from "../fallback";
 
 const postRepository = new PostRepository();
 
@@ -36,7 +38,9 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
       slug: post.author.slug,
       bio: post.author.bio
     },
+
     categories: post.postCategories.map((postCategory) => ({
+    categories: (post.postCategories ?? []).map((postCategory: any) => ({
       id: postCategory.category.id,
       name: postCategory.category.name,
       slug: postCategory.category.slug
@@ -55,19 +59,42 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
 }
 
 export async function listPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
-  const posts = await postRepository.findPublishedPosts(filters);
+  if (!hasDatabase()) {
+    return filterDemoPosts(filters);
+  }
 
-  return posts.map((post) => mapToBlogPost(post));
+  try {
+    const posts = await postRepository.findPublishedPosts(filters);
+    const mapped = posts.map((post) => mapToBlogPost(post));
+
+    return mapped.length > 0 ? mapped : filterDemoPosts(filters);
+  } catch {
+    return filterDemoPosts(filters);
+  }
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
-  const post = await postRepository.findPublishedPostBySlug(slug);
+  if (!hasDatabase()) {
+    return findDemoPostBySlug(slug);
+  }
 
-  return post ? mapToBlogPost(post) : null;
+  try {
+    const post = await postRepository.findPublishedPostBySlug(slug);
+    return post ? mapToBlogPost(post) : findDemoPostBySlug(slug);
+  } catch {
+    return findDemoPostBySlug(slug);
+  }
 }
 
 export async function listPublishedPostSlugs(): Promise<string[]> {
-  const slugs = await postRepository.findPublishedPostSlugs();
+  if (!hasDatabase()) {
+    return listDemoPostSlugs();
+  }
 
-  return slugs.map((entry) => entry.slug);
+  try {
+    const slugs = await postRepository.findPublishedPostSlugs();
+    return slugs.length > 0 ? slugs.map((entry) => entry.slug) : listDemoPostSlugs();
+  } catch {
+    return listDemoPostSlugs();
+  }
 }

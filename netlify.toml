@@ -3,4 +3,12 @@
 
 [build.environment]
   NPM_FLAGS = "--include=dev"
+  command = "npm ci --no-audit --no-fund && npm run build:netlify"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[context.deploy-preview.environment]
   NEXT_TELEMETRY_DISABLED = "1"

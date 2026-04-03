@@ -4,6 +4,9 @@ import { PUBLIC_POST_WHERE } from "../guards/publication";
 import type { BlogPostFilters } from "../types";
 
 const postInclude = {
+export type PostWithRelations = any;
+
+const postInclude: any = {
   author: true,
   postCategories: {
     include: {
@@ -20,6 +23,7 @@ const postInclude = {
 export type PostWithRelations = Prisma.PostGetPayload<{
   include: typeof postInclude;
 }>;
+};
 
 function buildPublicWhere(filters?: BlogPostFilters): Prisma.PostWhereInput {
   return {
@@ -68,14 +72,7 @@ export class PostRepository {
     return prisma.post.findMany({
       where: buildPublicWhere(filters),
       include: postInclude,
-      orderBy: [
-        {
-          publishedAt: "desc"
-        },
-        {
-          updatedAt: "desc"
-        }
-      ]
+      orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }]
     });
   }
 

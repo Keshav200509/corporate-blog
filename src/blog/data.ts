@@ -4,12 +4,7 @@ import { getPublishedPostBySlug as getPublishedPostBySlugFromService, listPublis
 function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
 }
-
 export async function getPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
-  if (!hasDatabase()) {
-    return [];
-  }
-
   return listPublishedPosts(filters);
 }
 
@@ -17,6 +12,5 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
   if (!hasDatabase()) {
     return null;
   }
-
   return getPublishedPostBySlugFromService(slug);
 }
