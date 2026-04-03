@@ -1,0 +1,6 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NPM_FLAGS = "--include=dev"
+  NEXT_TELEMETRY_DISABLED = "1"
