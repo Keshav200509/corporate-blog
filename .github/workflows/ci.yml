@@ -13,6 +13,7 @@ jobs:
     env:
       NEXT_PUBLIC_SITE_URL: https://example.com
       JWT_SECRET: 0123456789abcdef0123456789abcdef
+      NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -20,7 +21,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 20
+          cache: npm
 
       - name: Enforce public npm registry
         run: |
@@ -28,14 +30,20 @@ jobs:
           npm config delete proxy || true
           npm config delete https-proxy || true
 
+      - name: Validate package.json
+        run: npm run check:package-json
+
+
       - name: Install dependencies
-        run: npm install --include=dev
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify locked framework versions
+        run: npm run check:deps
 
       - name: Check conflict markers
-        run: ./scripts/check-conflict-markers.sh
-
-      - name: Check conflict markers
-        run: ./scripts/check-conflict-markers.sh
+        run: |
+          chmod +x ./scripts/check-conflict-markers.sh
+          ./scripts/check-conflict-markers.sh
 
       - name: Lint
         run: npm run lint

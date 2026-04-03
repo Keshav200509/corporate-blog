@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { listCategories } from "../../../../src/blog/services/category-service";
+import { listAuthors } from "../../../../src/blog/services/author-service";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const categories = await listCategories();
-    return NextResponse.json({ items: categories, total: categories.length });
+    const authors = await listAuthors();
+    return NextResponse.json({ items: authors, total: authors.length });
   } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }

@@ -9,11 +9,12 @@ import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, b
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  if (!process.env.DATABASE_URL) {
+  try {
+    const slugs = await listPublishedPostSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
     return [];
   }
-  const slugs = await listPublishedPostSlugs();
-  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -51,7 +52,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </Link>
       <article className="space-y-5">
         <header className="space-y-3">
-          <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-400">
+          <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             {post.categories.map((category) => (
               <Link key={category.id} href={`/category/${category.slug}`} className="hover:underline">
                 {category.name}
@@ -59,15 +60,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             ))}
           </div>
           <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
-          <p className="text-sm text-zinc-300">{post.excerpt}</p>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             By{" "}
             <Link href={`/author/${post.author.slug}`} className="hover:underline">
               {post.author.name}
             </Link>
           </p>
         </header>
-        <div className="space-y-4 text-zinc-200">
+        <div className="space-y-4 text-zinc-700 dark:text-zinc-200">
           {post.content.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}

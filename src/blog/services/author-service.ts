@@ -1,66 +1,93 @@
 import { prisma } from "../../lib/db/prisma";
+import { hasDatabase } from "../../lib/db/has-database";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
-import { listPublishedPosts } from "./post-service";
-
-function hasDatabase() {
-  return Boolean(process.env.DATABASE_URL);
-}
+import { getPublishedPosts } from "../data";
+import { listDemoAuthors } from "../fallback";
 
 export async function listAuthors() {
   if (!hasDatabase()) {
-    return [];
+    return listDemoAuthors();
   }
 
-  return prisma.user.findMany({
-    where: {
-      isActive: true,
-      posts: {
-        some: PUBLIC_POST_WHERE
-      }
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      bio: true,
-      _count: {
-        select: {
-          posts: true
+  try {
+    const authors = await prisma.user.findMany({
+      where: {
+        isActive: true,
+        posts: {
+          some: PUBLIC_POST_WHERE
         }
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        bio: true,
+        _count: {
+          select: {
+            posts: true
+          }
+        }
+      },
+      orderBy: {
+        name: "asc"
       }
-    },
-    orderBy: {
-      name: "asc"
-    }
-  });
+    });
+
+    return authors.length > 0 ? authors : listDemoAuthors();
+  } catch {
+    return listDemoAuthors();
+  }
 }
 
 export async function getAuthorWithPosts(slug: string) {
   if (!hasDatabase()) {
-    return null;
-  }
-
-  const author = await prisma.user.findUnique({
-    where: {
-      slug,
-      isActive: true
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      bio: true
+    const posts = await getPublishedPosts({ authorSlug: slug });
+    if (posts.length === 0) {
+      return null;
     }
-  });
 
-  if (!author) {
-    return null;
+    const author = posts[0]?.author;
+    if (!author) {
+      return null;
+    }
+
+    return {
+      ...author,
+      posts
+    };
   }
 
-  const posts = await listPublishedPosts({ authorSlug: slug });
+  try {
+    const author = await prisma.user.findUnique({
+      where: {
+        slug,
+        isActive: true
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        bio: true
+      }
+    });
 
-  return {
-    ...author,
-    posts
-  };
+    if (!author) {
+      return null;
+    }
+
+    const posts = await getPublishedPosts({ authorSlug: slug });
+
+    return {
+      ...author,
+      posts
+    };
+  } catch {
+    const posts = await getPublishedPosts({ authorSlug: slug });
+    if (posts.length === 0) {
+      return null;
+    }
+
+    const author = posts[0]?.author;
+    return author ? { ...author, posts } : null;
+  }
 }
