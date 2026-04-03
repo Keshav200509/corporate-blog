@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getCategoryWithPosts, listCategories } from "../../../src/blog/services/category-service";
 
+export const revalidate = 1800;
+
 export async function generateStaticParams() {
   if (!process.env.DATABASE_URL) {
     return [];
