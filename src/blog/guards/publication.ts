@@ -1,7 +1,5 @@
-import { PostStatus } from "@prisma/client";
-
 export const PUBLIC_POST_WHERE = {
-  status: PostStatus.PUBLISHED,
+  status: "PUBLISHED" as const,
   publishedAt: {
     not: null
   }

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { PostStatus } from "@prisma/client";
 import { requireRole } from "../../../../src/auth/access-control";
 import { createAuditLog, createDraftPost, listPostsForCms } from "../../../../src/auth/repositories";
 import { createDraftSchema } from "../../../../src/auth/validation";
 import { checkRateLimit } from "../../../../src/lib/rate-limit";
+
+type CmsPostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export async function GET(request: Request) {
   const auth = requireRole(request, "WRITER");
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const normalizedStatus =
-    status === "DRAFT" || status === "PUBLISHED" || status === "ARCHIVED" ? (status as PostStatus) : undefined;
+    status === "DRAFT" || status === "PUBLISHED" || status === "ARCHIVED" ? (status as CmsPostStatus) : undefined;
 
   const posts = await listPostsForCms({
     authorId: auth.role === "WRITER" ? auth.userId : undefined,

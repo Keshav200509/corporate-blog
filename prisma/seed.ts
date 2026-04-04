@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, PostStatus } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { hashPassword } from "../src/auth/password";
 
 const prisma = new PrismaClient();
@@ -62,7 +62,7 @@ async function main() {
         "The most effective approach combines structured data, canonical URLs, and fast page loads with editorial workflow.",
         "This architecture scales output while maintaining strict publish controls and indexability."
       ],
-      status: PostStatus.PUBLISHED,
+      status: "PUBLISHED",
       publishedAt: new Date("2026-03-17T09:00:00Z"),
       authorId: editor.id,
       readingTimeMinutes: 3,
@@ -92,7 +92,7 @@ async function main() {
       title: "Editorial Workflows That Scale",
       excerpt: "Draft isolation patterns that let large teams publish without stepping on each other.",
       content: ["Draft content for a post that has not been published yet."],
-      status: PostStatus.DRAFT,
+      status: "DRAFT",
       authorId: writer.id,
       postCategories: { create: [{ categoryId: growth.id }] }
     }

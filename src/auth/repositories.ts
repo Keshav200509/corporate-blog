@@ -1,6 +1,15 @@
 import { randomUUID, createHash } from "crypto";
-import { AuditAction, PostStatus, Prisma } from "@prisma/client";
 import { prisma } from "../lib/db/prisma";
+
+type PostStatusValue = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+type AuditActionValue =
+  | "CREATE_POST"
+  | "UPDATE_POST"
+  | "PUBLISH_POST"
+  | "UNPUBLISH_POST"
+  | "DELETE_POST"
+  | "LOGIN"
+  | "LOGOUT";
 
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
@@ -62,9 +71,14 @@ export async function revokeRefreshSession(token: string) {
   });
 }
 
-export async function createAuditLog(data: { action: AuditAction; actorId?: string | null; postId?: string | null; metadata?: Prisma.JsonValue }) {
+export async function createAuditLog(data: {
+  action: AuditActionValue;
+  actorId?: string | null;
+  postId?: string | null;
+  metadata?: unknown;
+}) {
   return prisma.auditLog.create({
-    data: data as Prisma.AuditLogUncheckedCreateInput
+    data: data as never
   });
 }
 
@@ -87,7 +101,7 @@ export async function createDraftPost(input: {
       content: input.content,
       seoTitle: input.seoTitle,
       seoDescription: input.seoDescription,
-      status: PostStatus.DRAFT,
+      status: "DRAFT",
       postCategories: {
         create: input.categoryIds.map((categoryId) => ({ categoryId }))
       }
@@ -95,7 +109,7 @@ export async function createDraftPost(input: {
   });
 }
 
-export async function listPostsForCms(input: { authorId?: string; status?: PostStatus }) {
+export async function listPostsForCms(input: { authorId?: string; status?: PostStatusValue }) {
   return prisma.post.findMany({
     where: {
       ...(input.authorId ? { authorId: input.authorId } : {}),
@@ -179,11 +193,11 @@ export async function updateDraftPost(postId: string, authorId: string, payload:
 }) {
   const post = await prisma.post.findUnique({ where: { id: postId } });
 
-  if (!post || post.status !== PostStatus.DRAFT || post.authorId !== authorId) {
+  if (!post || post.status !== "DRAFT" || post.authorId !== authorId) {
     return null;
   }
 
-  return prisma.$transaction(async (transaction) => {
+  return prisma.$transaction(async (transaction: any) => {
     if (payload.categoryIds) {
       await transaction.postCategory.deleteMany({ where: { postId } });
       await transaction.postCategory.createMany({
@@ -208,14 +222,14 @@ export async function updateDraftPost(postId: string, authorId: string, payload:
 export async function publishPost(postId: string) {
   const post = await prisma.post.findUnique({ where: { id: postId } });
 
-  if (!post || post.status !== PostStatus.DRAFT) {
+  if (!post || post.status !== "DRAFT") {
     return null;
   }
 
   return prisma.post.update({
     where: { id: postId },
     data: {
-      status: PostStatus.PUBLISHED,
+      status: "PUBLISHED",
       publishedAt: new Date()
     }
   });
@@ -224,14 +238,14 @@ export async function publishPost(postId: string) {
 export async function unpublishPost(postId: string) {
   const post = await prisma.post.findUnique({ where: { id: postId } });
 
-  if (!post || post.status !== PostStatus.PUBLISHED) {
+  if (!post || post.status !== "PUBLISHED") {
     return null;
   }
 
   return prisma.post.update({
     where: { id: postId },
     data: {
-      status: PostStatus.DRAFT,
+      status: "DRAFT",
       publishedAt: null
     }
   });

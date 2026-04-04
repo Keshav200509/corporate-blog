@@ -12,7 +12,7 @@ export async function generateStaticParams() {
   }
 
   const authors = await listAuthors();
-  return authors.map((author) => ({ slug: author.slug }));
+  return authors.map((author: { slug: string }) => ({ slug: author.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -47,7 +47,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
       </header>
 
       <section className="space-y-4">
-        {author.posts.map((post) => (
+        {author.posts.map((post: { id: string; slug: string; title: string; excerpt: string }) => (
           <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
             <h2 className="text-xl font-semibold">
               <Link href={`/blog/${post.slug}`} className="hover:underline">

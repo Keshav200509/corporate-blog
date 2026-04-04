@@ -1,4 +1,3 @@
-import type { Post, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/db/prisma";
 import { PUBLIC_POST_WHERE } from "../guards/publication";
 import type { BlogPostFilters } from "../types";
@@ -15,13 +14,11 @@ const postInclude = {
       sortOrder: "asc"
     }
   }
-} satisfies Prisma.PostInclude;
+};
 
-export type PostWithRelations = Prisma.PostGetPayload<{
-  include: typeof postInclude;
-}>;
+export type PostWithRelations = any;
 
-function buildPublicWhere(filters?: BlogPostFilters): Prisma.PostWhereInput {
+function buildPublicWhere(filters?: BlogPostFilters): Record<string, unknown> {
   return {
     ...PUBLIC_POST_WHERE,
     ...(filters?.authorSlug
@@ -89,7 +86,7 @@ export class PostRepository {
     });
   }
 
-  async findPublishedPostSlugs(): Promise<Pick<Post, "slug">[]> {
+  async findPublishedPostSlugs(): Promise<Array<{ slug: string }>> {
     return prisma.post.findMany({
       where: PUBLIC_POST_WHERE,
       select: {

@@ -36,13 +36,13 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
       slug: post.author.slug,
       bio: post.author.bio
     },
-    categories: post.postCategories.map((postCategory) => ({
+    categories: post.postCategories.map((postCategory: any) => ({
       id: postCategory.category.id,
       name: postCategory.category.name,
       slug: postCategory.category.slug
     })),
     faqs: Array.isArray(post.faqs)
-      ? post.faqs.map((faq) => ({
+      ? post.faqs.map((faq: any) => ({
           id: faq.id,
           question: faq.question,
           answer: faq.answer,
@@ -57,7 +57,7 @@ function mapToBlogPost(post: PostWithRelations): BlogPost {
 export async function listPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
   const posts = await postRepository.findPublishedPosts(filters);
 
-  return posts.map((post) => mapToBlogPost(post));
+  return posts.map((post: any) => mapToBlogPost(post));
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -69,5 +69,5 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
 export async function listPublishedPostSlugs(): Promise<string[]> {
   const slugs = await postRepository.findPublishedPostSlugs();
 
-  return slugs.map((entry) => entry.slug);
+  return slugs.map((entry: { slug: string }) => entry.slug);
 }

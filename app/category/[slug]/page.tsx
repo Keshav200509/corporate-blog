@@ -12,7 +12,7 @@ export async function generateStaticParams() {
   }
 
   const categories = await listCategories();
-  return categories.map((category) => ({ slug: category.slug }));
+  return categories.map((category: { slug: string }) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -47,7 +47,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       </header>
 
       <section className="space-y-4">
-        {category.posts.map((post) => (
+        {category.posts.map((post: { id: string; slug: string; title: string; excerpt: string }) => (
           <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
             <h2 className="text-xl font-semibold">
               <Link href={`/blog/${post.slug}`} className="hover:underline">
