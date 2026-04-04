@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getCanonicalUrl, getSiteName } from "../../../src/blog/seo";
 import { getCategoryWithPosts, listCategories } from "../../../src/blog/services/category-service";
 
+export const revalidate = 1800;
+
 export async function generateStaticParams() {
   try {
     const categories = await listCategories();
@@ -11,6 +13,9 @@ export async function generateStaticParams() {
   } catch {
     return [];
   }
+
+  const categories = await listCategories();
+  return categories.map((category: { slug: string }) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -44,6 +49,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       </header>
 
       <section className="space-y-4">
+        {category.posts.map((post: { id: string; slug: string; title: string; excerpt: string }) => (
+          <article key={post.id} className="rounded-xl border border-zinc-700 p-5">
+            <h2 className="text-xl font-semibold">
+              <Link href={`/blog/${post.slug}`} className="hover:underline">
+                {post.title}
+              </Link>
+            </h2>
+            <p className="mt-2 text-sm text-zinc-300">{post.excerpt}</p>
+          </article>
+        ))}
         {category.posts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-zinc-300 p-6 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
             No published posts in this category yet.

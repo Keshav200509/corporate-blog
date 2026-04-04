@@ -13,10 +13,15 @@ jobs:
     env:
       NEXT_PUBLIC_SITE_URL: https://example.com
       JWT_SECRET: 0123456789abcdef0123456789abcdef
+
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          # Run CI against the PR head commit so checks stay signal-focused on branch
+          # changes even when the PR has temporary merge conflicts with base.
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v5
@@ -30,6 +35,17 @@ jobs:
           npm config delete proxy || true
           npm config delete https-proxy || true
 
+      - name: Check package.json format
+        run: npm run check:package-json
+
+      - name: Install dependencies
+        run: npm install --include=dev
+
+      - name: Check dependency alignment
+        run: npm run check:deps
+
+      - name: Check conflict markers
+        run: npm run check:conflicts
       - name: Validate package.json
         run: npm run check:package-json
 
@@ -44,7 +60,6 @@ jobs:
         run: |
           chmod +x ./scripts/check-conflict-markers.sh
           ./scripts/check-conflict-markers.sh
-
       - name: Lint
         run: npm run lint
 

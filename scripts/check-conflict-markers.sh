@@ -3,6 +3,11 @@
 # Uses grep (always available) instead of rg (ripgrep) for portability.
 set -euo pipefail
 
+pattern='^(<{7}|={7}|>{7})'
+
+if rg -n "$pattern" app prisma src tests .github --glob '!node_modules/**' >/tmp/conflict_markers.out; then
+  echo "Conflict markers detected in repository files:"
+  cat /tmp/conflict_markers.out
 DIRS="app prisma src tests .github scripts"
 PATTERN="^(<<<<<<<|=======|>>>>>>>)"
 FOUND=0
