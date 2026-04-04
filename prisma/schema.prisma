@@ -122,7 +122,6 @@ model PostImage {
 
   @@index([postId, sortOrder])
 }
-
 model PostFaq {
   id          String   @id @default(cuid())
   postId      String

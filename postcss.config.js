@@ -1,3 +1,4 @@
+
 let hasTailwind = true;
 let hasAutoprefixer = true;
 
@@ -19,5 +20,9 @@ module.exports = {
   plugins: {
     ...(hasTailwind ? { tailwindcss: {} } : {}),
     ...(hasAutoprefixer ? { autoprefixer: {} } : {})
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {}
   }
 };

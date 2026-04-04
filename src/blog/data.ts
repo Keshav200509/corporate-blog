@@ -6,10 +6,6 @@ function hasDatabase() {
 }
 
 export async function getPublishedPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
-  if (!hasDatabase()) {
-    return [];
-  }
-
   return listPublishedPosts(filters);
 }
 

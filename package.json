@@ -13,10 +13,17 @@
     "check:conflicts": "bash scripts/check-conflict-markers.sh",
     "premerge": "npm run check:conflicts && npm run check:package-json && npm test && npm run lint",
     "build:netlify": "npm run check:package-json && npm run check:deps && npm run check:conflicts && npm run build"
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run",
+    "env:check": "./scripts/validate-env.sh .env.local",
+    "check:package-json": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json valid')\"",
+    "build:netlify": "npm run check:package-json && npm run check:deps && ./scripts/check-conflict-markers.sh && npm run build",
+    "verify": "npm run check:package-json && npm run check:deps && npm run lint && npm test && npm run build",
+    "check:deps": "node scripts/check-deps.js"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
-    "next": "15.2.3",
+    "next": "16.2.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "autoprefixer": "^10.4.21",
@@ -27,14 +34,21 @@
     "@types/node": "^22.13.9",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.21.0",
     "eslint-config-next": "15.2.3",
+    "postcss": "^8.5.6",
     "prisma": "^6.6.0",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9",
     "tsx": "^4.20.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+    "vitest": "^3.0.9"
+  },
+  "engines": {
+    "node": ">=20 <21"
   }
 }

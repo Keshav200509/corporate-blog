@@ -7,3 +7,12 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NEXT_PUBLIC_SITE_URL = "https://example.com"
   JWT_SECRET = "0123456789abcdef0123456789abcdef"
+  command = "npm ci --no-audit --no-fund && npm run build:netlify"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[context.deploy-preview.environment]
+  NEXT_TELEMETRY_DISABLED = "1"
