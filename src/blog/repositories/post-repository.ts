@@ -14,7 +14,7 @@ const postInclude = {
       sortOrder: "asc"
     }
   }
-};
+} as const;
 
 export type PostWithRelations = any;
 

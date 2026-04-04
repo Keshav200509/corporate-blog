@@ -1,16 +1,23 @@
-const optionalPlugin = (name) => {
-  try {
-    require.resolve(name);
-    return { [name]: {} };
-  } catch {
-    console.warn(`${name} package not found; skipping ${name} PostCSS plugin for this build.`);
-    return {};
-  }
-};
+let hasTailwind = true;
+let hasAutoprefixer = true;
+
+try {
+  require.resolve("tailwindcss");
+} catch {
+  hasTailwind = false;
+  console.warn("tailwindcss package not found; skipping tailwindcss PostCSS plugin for this build.");
+}
+
+try {
+  require.resolve("autoprefixer");
+} catch {
+  hasAutoprefixer = false;
+  console.warn("autoprefixer package not found; skipping autoprefixer PostCSS plugin for this build.");
+}
 
 module.exports = {
   plugins: {
-    ...optionalPlugin("tailwindcss"),
-    ...optionalPlugin("autoprefixer")
+    ...(hasTailwind ? { tailwindcss: {} } : {}),
+    ...(hasAutoprefixer ? { autoprefixer: {} } : {})
   }
 };

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "node scripts/run-lint.mjs",
     "test": "vitest run",
     "check:package-json": "node scripts/check-package-json.mjs",
     "check:deps": "node scripts/check-deps.mjs",
