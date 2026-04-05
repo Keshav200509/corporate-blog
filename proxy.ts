@@ -12,7 +12,7 @@ function applySecurityHeaders(response: NextResponse) {
   );
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin")) {
     return new NextResponse("Not found", { status: 404 });
   }
