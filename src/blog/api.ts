@@ -1,14 +1,28 @@
 import { headers } from "next/headers";
 
 function envBaseUrl() {
+  // Explicit override (highest priority)
   const explicit = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL;
   if (explicit) {
     return explicit.replace(/\/$/, "");
   }
 
+  // Vercel automatic URL
   const vercel = process.env.VERCEL_URL;
   if (vercel) {
     return `https://${vercel.replace(/\/$/, "")}`;
+  }
+
+  // Netlify: DEPLOY_URL is the deploy-specific URL (works for previews too)
+  const netlifyDeploy = process.env.DEPLOY_URL;
+  if (netlifyDeploy) {
+    return netlifyDeploy.replace(/\/$/, "");
+  }
+
+  // Netlify: URL is the primary site URL
+  const netlifyUrl = process.env.URL;
+  if (netlifyUrl) {
+    return netlifyUrl.replace(/\/$/, "");
   }
 
   return null;

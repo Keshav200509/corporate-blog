@@ -72,7 +72,7 @@ export async function createAuditLog(data: { action: AuditAction; actorId?: stri
       action: data.action,
       actorId: data.actorId,
       postId: data.postId,
-      metadata: data.metadata
+      metadata: data.metadata ?? undefined
     }
   });
 }
@@ -104,7 +104,36 @@ export async function createDraftPost(input: {
   });
 }
 
-export async function updateDraftPost(postId: string, authorId: string, payload: {
+export async function listPosts(options: { authorId?: string } = {}) {
+  return prisma.post.findMany({
+    where: options.authorId ? { authorId: options.authorId } : undefined,
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      status: true,
+      publishedAt: true,
+      updatedAt: true,
+      author: { select: { id: true, name: true } }
+    }
+  });
+}
+
+export async function getPostForEditing(postId: string, requesterId: string, requesterRole: string) {
+  return prisma.post.findFirst({
+    where: {
+      id: postId,
+      ...(requesterRole === "WRITER" ? { authorId: requesterId } : {})
+    },
+    include: {
+      postCategories: { include: { category: true } },
+      author: { select: { id: true, name: true } }
+    }
+  });
+}
+
+export async function updateDraftPost(postId: string, authorId: string, requesterRole: string, payload: {
   title?: string;
   slug?: string;
   excerpt?: string;
@@ -115,7 +144,11 @@ export async function updateDraftPost(postId: string, authorId: string, payload:
 }) {
   const post = await prisma.post.findUnique({ where: { id: postId } });
 
-  if (!post || post.status !== PostStatus.DRAFT || post.authorId !== authorId) {
+  if (!post || post.status !== PostStatus.DRAFT) {
+    return null;
+  }
+
+  if (requesterRole === "WRITER" && post.authorId !== authorId) {
     return null;
   }
 

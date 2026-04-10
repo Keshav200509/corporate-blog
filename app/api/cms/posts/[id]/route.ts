@@ -16,7 +16,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ message: "Invalid request", issues: parsed.error.issues }, { status: 400 });
     }
 
-    const post = await updateDraftPost(id, auth.userId, parsed.data);
+    const post = await updateDraftPost(id, auth.userId, auth.role, parsed.data);
     if (!post) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }

@@ -19,6 +19,12 @@ export default async function HomePage() {
     posts: posts.length,
     authors: authors.length,
     categories: categories.length,
+  const featured = posts.slice(0, 3);
+  const latest = posts.slice(0, 8);
+  const stats = {
+    posts: posts.length,
+    authors: authors.length,
+    categories: categories.length
   };
 
   return (
@@ -118,6 +124,40 @@ export default async function HomePage() {
               View full feed <span aria-hidden>→</span>
             </Link>
           )}
+        <div className="grid grid-cols-3 gap-3 rounded-xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur">
+          <article>
+            <p className="text-3xl font-bold">{stats.posts}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Posts</p>
+          </article>
+          <article>
+            <p className="text-3xl font-bold">{stats.authors}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Authors</p>
+          </article>
+          <article>
+            <p className="text-3xl font-bold">{stats.categories}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Categories</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-5 flex items-end justify-between">
+          <h2 className="text-3xl font-semibold">Featured analysis</h2>
+          <Link href="/blog" className="text-sm font-semibold text-slate-700 hover:underline">
+            View all →
+          </Link>
+        </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {featured.map((item) => (
+            <article key={item.id} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">By {item.author.name}</p>
+              <h3 className="mt-2 text-2xl font-semibold leading-tight">{item.title}</h3>
+              <p className="mt-3 text-sm text-slate-600">{item.excerpt}</p>
+              <Link href={`/blog/${item.slug}`} className="mt-5 inline-block text-sm font-semibold hover:underline">
+                Open brief →
+              </Link>
+            </article>
+          ))}
         </div>
 
         {/* Category radar */}
@@ -138,6 +178,18 @@ export default async function HomePage() {
                     <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${color.badge}`}>
                       {cat._count.postCategories}
                     </span>
+      <section className="grid gap-6 md:grid-cols-[1.4fr_0.8fr]">
+        <article className="rounded-2xl border border-slate-200 bg-white p-8">
+          <h2 className="text-2xl font-semibold">Latest from the wire</h2>
+          <div className="mt-4 space-y-4">
+            {latest.map((post) => (
+              <div
+                key={post.id}
+                className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 last:border-b-0"
+              >
+                <div>
+                  <Link href={`/blog/${post.slug}`} className="font-medium text-slate-900 hover:underline">
+                    {post.title}
                   </Link>
                 );
               })}
@@ -176,6 +228,18 @@ export default async function HomePage() {
             >
               Meet the team →
             </Link>
+        <aside className="rounded-2xl bg-slate-950 p-8 text-white">
+          <h3 className="text-2xl font-semibold">Category radar</h3>
+          <div className="mt-4 space-y-2 text-sm text-slate-300">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/category/${category.slug}`}
+                className="block rounded border border-white/10 px-3 py-2 hover:bg-white/10"
+              >
+                {category.name}
+              </Link>
+            ))}
           </div>
         </aside>
       </section>
