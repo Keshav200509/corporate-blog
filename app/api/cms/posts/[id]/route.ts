@@ -4,28 +4,32 @@ import { createAuditLog, updateDraftPost } from "../../../../../src/auth/reposit
 import { updateDraftSchema } from "../../../../../src/auth/validation";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const auth = requireRole(request, "WRITER");
-  if (auth instanceof NextResponse) {
-    return auth;
+  try {
+    const { id } = await params;
+    const auth = requireRole(request, "WRITER");
+    if (auth instanceof NextResponse) {
+      return auth;
+    }
+
+    const parsed = updateDraftSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ message: "Invalid request", issues: parsed.error.issues }, { status: 400 });
+    }
+
+    const post = await updateDraftPost(id, auth.userId, parsed.data);
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+
+    await createAuditLog({
+      action: "UPDATE_POST",
+      actorId: auth.userId,
+      postId: post.id,
+      metadata: { status: post.status }
+    });
+
+    return NextResponse.json(post);
+  } catch {
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
-
-  const parsed = updateDraftSchema.safeParse(await request.json());
-  if (!parsed.success) {
-    return NextResponse.json({ message: "Invalid request", issues: parsed.error.issues }, { status: 400 });
-  }
-
-  const post = await updateDraftPost(id, auth.userId, parsed.data);
-  if (!post) {
-    return NextResponse.json({ message: "Post not found" }, { status: 404 });
-  }
-
-  await createAuditLog({
-    action: "UPDATE_POST",
-    actorId: auth.userId,
-    postId: post.id,
-    metadata: { status: post.status }
-  });
-
-  return NextResponse.json(post);
 }
