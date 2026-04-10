@@ -5,6 +5,7 @@
 @layer base {
   :root {
     --color-brand: 99 102 241;
+    --font-inter: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   }
 
   html {
