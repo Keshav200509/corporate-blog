@@ -1,12 +1,7 @@
 import Link from "next/link";
-import { fetchApiJson } from "../src/blog/api";
-
-type OverviewResponse = {
-  stats: { posts: number; authors: number; categories: number };
-  featured: Array<{ id: string; title: string; excerpt: string; slug: string; author: { name: string } }>;
-  latest: Array<{ id: string; title: string; slug: string; publishedAt: string | null; categories: Array<{ name: string }> }>;
-  categories: Array<{ id: string; name: string; slug: string; _count?: { postCategories: number } }>;
-};
+import { getPublishedPosts } from "../src/blog/data";
+import { listAuthors } from "../src/blog/services/author-service";
+import { listCategories } from "../src/blog/services/category-service";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +12,19 @@ const quickPaths = [
 ];
 
 export default async function HomePage() {
-  const overview = await fetchApiJson<OverviewResponse>("/api/blog/overview");
+  const [posts, authors, categories] = await Promise.all([
+    getPublishedPosts(),
+    listAuthors(),
+    listCategories()
+  ]);
+
+  const featured = posts.slice(0, 3);
+  const latest = posts.slice(0, 8);
+  const stats = {
+    posts: posts.length,
+    authors: authors.length,
+    categories: categories.length
+  };
 
   return (
     <main className="mx-auto max-w-7xl space-y-14 px-6 py-10">
@@ -51,15 +58,15 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-3 gap-3 rounded-xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur">
           <article>
-            <p className="text-3xl font-bold">{overview.stats.posts}</p>
+            <p className="text-3xl font-bold">{stats.posts}</p>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Posts</p>
           </article>
           <article>
-            <p className="text-3xl font-bold">{overview.stats.authors}</p>
+            <p className="text-3xl font-bold">{stats.authors}</p>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Authors</p>
           </article>
           <article>
-            <p className="text-3xl font-bold">{overview.stats.categories}</p>
+            <p className="text-3xl font-bold">{stats.categories}</p>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Categories</p>
           </article>
         </div>
@@ -73,7 +80,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
-          {overview.featured.map((item) => (
+          {featured.map((item) => (
             <article key={item.id} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">By {item.author.name}</p>
               <h3 className="mt-2 text-2xl font-semibold leading-tight">{item.title}</h3>
@@ -90,7 +97,7 @@ export default async function HomePage() {
         <article className="rounded-2xl border border-slate-200 bg-white p-8">
           <h2 className="text-2xl font-semibold">Latest from the wire</h2>
           <div className="mt-4 space-y-4">
-            {overview.latest.map((post) => (
+            {latest.map((post) => (
               <div
                 key={post.id}
                 className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 last:border-b-0"
@@ -112,7 +119,7 @@ export default async function HomePage() {
         <aside className="rounded-2xl bg-slate-950 p-8 text-white">
           <h3 className="text-2xl font-semibold">Category radar</h3>
           <div className="mt-4 space-y-2 text-sm text-slate-300">
-            {overview.categories.map((category) => (
+            {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/category/${category.slug}`}
