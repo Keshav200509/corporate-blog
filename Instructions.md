@@ -17,7 +17,7 @@ Every push and pull request runs these checks in order. A failure in any step bl
 6. npm run build                — Next.js build must succeed
 ```
 
-Failing after **7–11 seconds** almost always means step 3 (conflict markers) or step 1 (invalid JSON).
+Failing early often means steps 1–4 (invalid JSON, dependency mismatch, conflict markers, or lint/syntax errors).
 
 ---
 
@@ -62,14 +62,20 @@ grep -rn "<<<<<<\|=======\|>>>>>>>" app src tests prisma .github scripts
 # 2. Validate package.json
 npm run check:package-json
 
-# 3. Run tests
-npm test
+# 3. (Optional, recommended) Run TypeScript/TSX checks
+npm run typecheck
 
 # 4. Run lint
 npm run lint
+
+# 5. Run tests
+npm test
+
+# 6. Run production build
+npm run build
 ```
 
-All four must succeed. If any fails, fix it before committing.
+All checks must succeed. If any fails, fix it before committing.
 
 ---
 
