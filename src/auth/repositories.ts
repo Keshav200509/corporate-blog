@@ -72,7 +72,7 @@ export async function createAuditLog(data: { action: AuditAction; actorId?: stri
       action: data.action,
       actorId: data.actorId,
       postId: data.postId,
-      metadata: data.metadata
+      metadata: data.metadata ?? undefined
     }
   });
 }
