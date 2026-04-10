@@ -42,6 +42,7 @@ export default async function CategoryIndexPage() {
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Category list">
           {categories.map((cat, i) => {
             const color = categoryColor(cat.slug);
+            const description = (cat as { description?: string }).description;
             return (
               <article
                 key={cat.id}
@@ -52,9 +53,9 @@ export default async function CategoryIndexPage() {
                 <div className={`h-1 w-full ${color.accent}`} />
                 <div className="p-6">
                   <span className={color.badge}>{cat.name}</span>
-                  {cat.description && (
+                  {description && (
                     <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                      {cat.description}
+                      {description}
                     </p>
                   )}
                   <div className="mt-4 flex items-center justify-between">
