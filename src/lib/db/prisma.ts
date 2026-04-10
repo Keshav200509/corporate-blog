@@ -4,13 +4,13 @@ declare global {
   var prismaClientSingleton: PrismaClient | undefined;
 }
 
-function createUnavailablePrismaClient(): PrismaClient {
+function createUnavailablePrismaClient(reason: string): PrismaClient {
   return new Proxy(
     {},
     {
       get() {
         return () => {
-          throw new Error("Prisma client unavailable: DATABASE_URL is missing or invalid");
+          throw new Error(reason);
         };
       }
     }
@@ -19,15 +19,16 @@ function createUnavailablePrismaClient(): PrismaClient {
 
 function createPrismaClient(): PrismaClient {
   if (!process.env.DATABASE_URL) {
-    return createUnavailablePrismaClient();
+    return createUnavailablePrismaClient("Prisma client unavailable: DATABASE_URL environment variable is not set");
   }
 
   try {
     return new PrismaClient({
       log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"]
     });
-  } catch {
-    return createUnavailablePrismaClient();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return createUnavailablePrismaClient(`Prisma client failed to initialize: ${message}`);
   }
 }
 

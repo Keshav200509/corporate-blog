@@ -2,8 +2,6 @@ import { randomUUID, createHash } from "crypto";
 import { AuditAction, PostStatus, Prisma } from "@prisma/client";
 import { prisma } from "../lib/db/prisma";
 
-const db = prisma as any;
-
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -13,7 +11,7 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function createRefreshSession(input: { userId: string; token: string; expiresAt: Date; ipAddress?: string | null; userAgent?: string | null }) {
-  return db.refreshToken.create({
+  return prisma.refreshToken.create({
     data: {
       id: randomUUID(),
       tokenHash: hashToken(input.token),
@@ -27,15 +25,19 @@ export async function createRefreshSession(input: { userId: string; token: strin
 
 export async function rotateRefreshSession(input: { oldToken: string; newToken: string; userId: string; expiresAt: Date; ipAddress?: string | null; userAgent?: string | null }) {
   const oldHash = hashToken(input.oldToken);
+  const now = new Date();
 
-  const session = await db.refreshToken.findUnique({ where: { tokenHash: oldHash } });
-  if (!session || session.revokedAt || session.expiresAt < new Date()) {
-    return null;
-  }
+  return prisma.$transaction(async (tx) => {
+    const result = await tx.refreshToken.updateMany({
+      where: { tokenHash: oldHash, revokedAt: null, expiresAt: { gt: now } },
+      data: { revokedAt: now }
+    });
 
-  await prisma.$transaction([
-    db.refreshToken.update({ where: { tokenHash: oldHash }, data: { revokedAt: new Date() } }),
-    db.refreshToken.create({
+    if (result.count === 0) {
+      return null;
+    }
+
+    await tx.refreshToken.create({
       data: {
         id: randomUUID(),
         tokenHash: hashToken(input.newToken),
@@ -44,16 +46,16 @@ export async function rotateRefreshSession(input: { oldToken: string; newToken: 
         ipAddress: input.ipAddress,
         userAgent: input.userAgent
       }
-    })
-  ]);
+    });
 
-  return true;
+    return true;
+  });
 }
 
 export async function revokeRefreshSession(token: string) {
   const tokenHash = hashToken(token);
 
-  await db.refreshToken.updateMany({
+  await prisma.refreshToken.updateMany({
     where: {
       tokenHash,
       revokedAt: null
@@ -66,7 +68,12 @@ export async function revokeRefreshSession(token: string) {
 
 export async function createAuditLog(data: { action: AuditAction; actorId?: string | null; postId?: string | null; metadata?: Prisma.JsonValue }) {
   return prisma.auditLog.create({
-    data: data as any
+    data: {
+      action: data.action,
+      actorId: data.actorId,
+      postId: data.postId,
+      metadata: data.metadata
+    }
   });
 }
 
