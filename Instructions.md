@@ -82,7 +82,13 @@ All checks must succeed. If any fails, fix it before committing.
 ## Merge Strategy
 
 - **Never use `git merge` directly** on a branch with conflicts without resolving them first
-- When rebasing, resolve each conflict file-by-file and verify with the scan above
+- Prefer rebasing on top of `origin/main` to keep PR history linear
+- Use the contributor-safe sync command before pushing: `npm run sync:main`
+- If a conflict appears, resolve it immediately and rerun:
+  - `./scripts/check-conflict-markers.sh`
+  - `npm run lint`
+  - `npm test`
+  - `npm run build:netlify`
 - Prefer small, focused commits over large batched changes
 
 ---

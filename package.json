@@ -14,6 +14,8 @@
     "build:netlify": "npm run check:package-json && npm run check:deps && ./scripts/check-conflict-markers.sh && npm run lint && npm run build",
     "verify": "npm run check:package-json && npm run check:deps && npm run lint && npm test && npm run build",
     "check:deps": "node scripts/check-deps.js",
+    "typecheck": "tsc --noEmit",
+    "sync:main": "./scripts/sync-with-main.sh"
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
