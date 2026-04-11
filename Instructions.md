@@ -6,18 +6,20 @@ This file tells AI coding agents the rules for this repo. **Read before making a
 
 ## CI Pipeline — What Must Pass
 
-Every push and pull request runs these checks in order. A failure in any step blocks the merge.
+Every push and pull request runs these checks in order. **All must pass before a PR can be merged.**
 
 ```
 1. npm run check:package-json   — package.json must be valid JSON
 2. npm ci                       — deterministic install from lockfile
 3. check-conflict-markers.sh    — NO git conflict markers anywhere
 4. npm run lint                 — ESLint must pass with zero errors
-5. npm test                     — All Vitest tests must pass
-6. npm run build                — Next.js build must succeed
+5. npm run typecheck            — tsc --noEmit must pass (catches TSX syntax errors)
+6. npm test                     — All Vitest tests must pass
+7. npm run build                — Next.js / Turbopack build must succeed
 ```
 
-Failing early often means steps 1–4 (invalid JSON, dependency mismatch, conflict markers, or lint/syntax errors).
+**TypeScript typecheck (step 5) is mandatory.** It catches JSX/TSX syntax errors and type
+errors before Turbopack does — and gives clearer messages. Never skip it.
 
 ---
 
@@ -53,37 +55,79 @@ This must return zero results before any commit.
 
 ## Before Every Commit — Checklist
 
-Run this before committing anything:
+The pre-commit hook runs automatically after `npm install`. To run the full suite manually:
 
 ```bash
-# 1. Check for conflict markers
-grep -rn "<<<<<<\|=======\|>>>>>>>" app src tests prisma .github scripts
-
-# 2. Validate package.json
-npm run check:package-json
-
-# 3. (Optional, recommended) Run TypeScript/TSX checks
+# Quick (runs automatically on every commit)
+./scripts/check-conflict-markers.sh
+npm run lint
 npm run typecheck
 
-# 4. Run lint
-npm run lint
-
-# 5. Run tests
-npm test
-
-# 6. Run production build
-npm run build
+# Full verification before pushing
+npm run verify
+# (equivalent to: check:package-json + check:deps + lint + typecheck + test + build)
 ```
 
 All checks must succeed. If any fails, fix it before committing.
 
 ---
 
-## Merge Strategy
+## Merge Strategy — How to Avoid Conflict Disasters
 
-- **Never use `git merge` directly** on a branch with conflicts without resolving them first
-- When rebasing, resolve each conflict file-by-file and verify with the scan above
-- Prefer small, focused commits over large batched changes
+**Root cause of recurring breakages:** branches diverge from `main`, PRs are merged with
+conflicts that are badly resolved (no literal markers, but semantically broken code).
+
+### The correct workflow (follow this every time):
+
+```bash
+# 1. Keep your feature branch current — do this BEFORE creating a PR
+git fetch origin
+git rebase origin/main
+# Resolve any conflicts file-by-file, then:
+git add <resolved-file>
+git rebase --continue
+
+# 2. Verify the rebased branch builds cleanly
+npm run verify
+
+# 3. Push the rebased branch
+git push -u origin <branch-name> --force-with-lease
+
+# 4. Create the PR — CI must pass before merging
+```
+
+### Rules:
+- **Always rebase** your branch on `main` before opening a PR, not after
+- **Never merge `main` into your feature branch** — rebase instead
+- **Never merge a PR with failing CI** — wait for all checks to go green
+- **After resolving a conflict**, run `npm run typecheck && npm run lint` immediately
+- **Never use `git merge --no-ff`** on feature branches; use squash or rebase merge in GitHub UI
+
+### Common merge mistake — duplicated code:
+When GitHub shows a conflict and you edit it in the browser, ensure you keep **one** version
+of every function/block. The most dangerous pattern is silently getting two copies of an
+object literal where the first is unclosed:
+
+```tsx
+// BROKEN — stats object not closed, parser errors on `const featured`
+const stats = {
+  posts: posts.length,
+  authors: authors.length,       ← you see this in the log
+  categories: categories.length, ← you see this in the log
+const featured = posts[0];       ← parser rejects this (still inside stats)
+```
+
+```tsx
+// CORRECT — one version, object properly closed
+const stats = {
+  posts: posts.length,
+  authors: authors.length,
+  categories: categories.length,
+};
+const featured = posts[0];
+```
+
+Run `npm run typecheck` after resolving any conflict — tsc catches these in milliseconds.
 
 ---
 
@@ -123,3 +167,5 @@ bash scripts/setup-hooks.sh
 | `next` / `eslint-config-next` mismatch | package.json edited without lockfile update | Run `npm install` |
 | Build fails with Prisma error | `DATABASE_URL` not set or invalid | Set valid `DATABASE_URL` or check `hasDatabase()` guard |
 | Tests fail on `verifyToken` | `JWT_SECRET` not set in test env | Tests set it in `beforeEach` — check test file |
+| Turbopack "Expected '</'..." or "Unexpected token ident" | Bad merge resolution — unclosed JSX/object | Run `npm run typecheck` to find exact line; fix the unclosed tag or brace |
+| Pre-commit hook not running | Hooks not installed | Run `bash scripts/setup-hooks.sh` (or `npm install` which runs `prepare`) |

@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
+# Git pre-commit hook — blocks commits that would break the build.
+# Installed automatically via `npm install` (prepare script).
+# Install manually: bash scripts/setup-hooks.sh
 set -euo pipefail
 
+echo "🔍 Pre-commit: checking conflict markers..."
 ./scripts/check-conflict-markers.sh
+
+echo "🔍 Pre-commit: running lint..."
 npm run lint
+
+echo "🔍 Pre-commit: running TypeScript typecheck..."
+npm run typecheck
+
+echo "✅ Pre-commit checks passed."

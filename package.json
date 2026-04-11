@@ -11,10 +11,11 @@
     "postinstall": "prisma generate",
     "env:check": "./scripts/validate-env.sh .env.local",
     "check:package-json": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json valid')\"",
-    "build:netlify": "npm run check:package-json && npm run check:deps && ./scripts/check-conflict-markers.sh && npm run lint && npm run build",
-    "verify": "npm run check:package-json && npm run check:deps && npm run lint && npm test && npm run build",
+    "build:netlify": "npm run check:package-json && npm run check:deps && ./scripts/check-conflict-markers.sh && npm run lint && npm run typecheck && npm run build",
+    "verify": "npm run check:package-json && npm run check:deps && npm run lint && npm run typecheck && npm test && npm run build",
     "check:deps": "node scripts/check-deps.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare": "bash scripts/setup-hooks.sh 2>/dev/null || true"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
