@@ -16,6 +16,7 @@
     "check:deps": "node scripts/check-deps.js",
     "typecheck": "tsc --noEmit",
     "sync:main": "./scripts/sync-with-main.sh"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",

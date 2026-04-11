@@ -12,6 +12,8 @@ const compat = new FlatCompat({
 const config = [
   {
     ignores: [".next/**", ".netlify/**", ".deno/**", "deno_dir/**", "tmp/**", "node_modules/**", "dist/**", "coverage/**"]
+
+    ignores: [".next/**", "node_modules/**", "dist/**"]
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
