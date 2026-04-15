@@ -5,11 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/blog",              label: "Blog" },
-  { href: "/category",          label: "Topics" },
-  { href: "/author",            label: "Authors" },
-  { href: "/explore",           label: "Explore" },
-  { href: "/selfie-generator",  label: "AI Selfie" },
+  { href: "/blog",     label: "Blog" },
+  { href: "/category", label: "Topics" },
+  { href: "/author",   label: "Authors" },
+  { href: "/explore",  label: "Explore" },
 ];
 
 export default function Header() {

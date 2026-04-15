@@ -23,6 +23,3 @@ yarn-error.log*
 
 .netlify/
 
-# Selfie generator – temporary uploaded / processed images
-temp/
-
