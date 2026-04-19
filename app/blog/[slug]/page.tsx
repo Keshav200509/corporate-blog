@@ -6,6 +6,7 @@ import { getCanonicalUrl, getPostDescription, getPostTitle, getSiteName } from "
 import { listPublishedPostSlugs } from "../../../src/blog/services/post-service";
 import { buildArticleEnhancedJsonLd, buildAuthorJsonLd, buildBreadcrumbJsonLd, buildFaqJsonLd } from "../../../src/blog/structured-data";
 import ReadingProgress from "../../../src/components/ReadingProgress";
+import ShareButtons from "../../../src/components/ShareButtons";
 import { categoryColor, initials, readingTime, formatDate } from "../../../src/components/PostCard";
 
 export const revalidate = 86400;
@@ -50,8 +51,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const faqJsonLd = buildFaqJsonLd(post);
 
   const primary = post.categories[0];
-  const color = primary ? categoryColor(primary.slug) : { badge: "badge badge-zinc", accent: "bg-zinc-400" };
+  const color = primary ? categoryColor(primary.slug) : { badge: "badge badge-zinc", accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
   const rt = readingTime(post.content);
+  const canonicalUrl = getCanonicalUrl(`/blog/${post.slug}`);
 
   return (
     <>
@@ -59,27 +61,32 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       <main className="mx-auto max-w-3xl px-6 py-12">
 
-        {/* ── Breadcrumb ───────────────────────────────────────────── */}
-        <nav className="mb-8 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400" aria-label="Breadcrumb">
+        {/* ── Breadcrumb ─────────────────────────────────────────── */}
+        <nav
+          className="mb-8 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400"
+          aria-label="Breadcrumb"
+        >
           <Link href="/" className="transition hover:text-zinc-900 dark:hover:text-white">Home</Link>
           <span aria-hidden>/</span>
           <Link href="/blog" className="transition hover:text-zinc-900 dark:hover:text-white">Blog</Link>
           {primary && (
             <>
               <span aria-hidden>/</span>
-              <Link href={`/category/${primary.slug}`} className="transition hover:text-zinc-900 dark:hover:text-white">
+              <Link
+                href={`/category/${primary.slug}`}
+                className="transition hover:text-zinc-900 dark:hover:text-white"
+              >
                 {primary.name}
               </Link>
             </>
           )}
         </nav>
 
-        {/* ── Article ──────────────────────────────────────────────── */}
+        {/* ── Article ────────────────────────────────────────────── */}
         <article>
 
           {/* Header */}
-          <header className="mb-10 space-y-4 animate-slide-up">
-            {/* Categories */}
+          <header className="mb-10 space-y-5 animate-slide-up">
             <div className="flex flex-wrap gap-2">
               {post.categories.map((cat) => {
                 const catColor = categoryColor(cat.slug);
@@ -91,7 +98,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               })}
             </div>
 
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-zinc-900 dark:text-white md:text-5xl">
               {post.title}
             </h1>
 
@@ -101,25 +108,29 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
             {/* Meta row */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-b border-zinc-100 py-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-              <span className="flex items-center gap-2">
-                <span className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
+              <span className="flex items-center gap-2.5">
+                <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
                   {initials(post.author.name)}
                 </span>
                 <Link
                   href={`/author/${post.author.slug}`}
-                  className="font-medium text-zinc-700 transition hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
+                  className="font-semibold text-zinc-800 transition hover:text-indigo-600 dark:text-zinc-200 dark:hover:text-indigo-400"
                 >
                   {post.author.name}
                 </Link>
               </span>
-              <span>·</span>
+              <span aria-hidden>·</span>
               <span>{rt} min read</span>
               {post.publishedAt && (
                 <>
-                  <span>·</span>
+                  <span aria-hidden>·</span>
                   <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
                 </>
               )}
+              {/* Share buttons inline with meta */}
+              <span className="ml-auto">
+                <ShareButtons title={post.title} url={canonicalUrl} />
+              </span>
             </div>
           </header>
 
@@ -132,7 +143,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           {/* FAQs */}
           {post.faqs.length > 0 && (
-            <section className="mt-14 border-t border-zinc-200 pt-10 dark:border-zinc-800" aria-label="Frequently asked questions">
+            <section
+              className="mt-14 border-t border-zinc-200 pt-10 dark:border-zinc-800"
+              aria-label="Frequently asked questions"
+            >
               <h2 className="mb-6 text-2xl font-bold text-zinc-900 dark:text-white">
                 Frequently asked questions
               </h2>
@@ -140,21 +154,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 {post.faqs.map((faq) => (
                   <details
                     key={faq.id}
-                    className="group rounded-xl border border-zinc-200 bg-zinc-50 transition open:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:open:bg-zinc-800"
+                    className="group rounded-xl border border-zinc-200 bg-zinc-50 transition-colors open:border-indigo-200 open:bg-white dark:border-zinc-800 dark:bg-zinc-900/50 dark:open:border-indigo-900 dark:open:bg-zinc-900"
                   >
                     <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 font-semibold text-zinc-900 dark:text-white">
                       {faq.question}
                       <svg
-                        className="h-4 w-4 shrink-0 text-zinc-400 transition group-open:rotate-180"
+                        className="h-4 w-4 shrink-0 text-zinc-400 transition-transform group-open:rotate-180"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
+                        aria-hidden
                       >
                         <path d="m6 9 6 6 6-6" />
                       </svg>
                     </summary>
-                    <p className="px-5 pb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                       {faq.answer}
                     </p>
                   </details>
@@ -165,48 +180,54 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         </article>
 
-        {/* ── Author card ──────────────────────────────────────────── */}
-        <aside className="mt-14 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-400">About the author</p>
-          <div className="flex items-start gap-4">
-            <Link href={`/author/${post.author.slug}`}>
-              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white transition hover:scale-105 ${color.accent}`}>
-                {initials(post.author.name)}
-              </span>
-            </Link>
-            <div>
-              <Link
-                href={`/author/${post.author.slug}`}
-                className="font-bold text-zinc-900 transition hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
-              >
-                {post.author.name}
+        {/* ── Author card ────────────────────────────────────────── */}
+        <aside className="mt-14 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+          <div className={`h-1 w-full ${color.accent}`} />
+          <div className="bg-zinc-50 p-6 dark:bg-zinc-900">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-400">
+              About the author
+            </p>
+            <div className="flex items-start gap-4">
+              <Link href={`/author/${post.author.slug}`} className="shrink-0">
+                <span className={`flex h-14 w-14 items-center justify-center rounded-full text-base font-bold text-white transition hover:scale-105 ${color.accent}`}>
+                  {initials(post.author.name)}
+                </span>
               </Link>
-              {post.author.bio && (
-                <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                  {post.author.bio}
-                </p>
-              )}
-              <Link
-                href={`/author/${post.author.slug}`}
-                className="mt-2 inline-flex text-xs font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-400"
-              >
-                View all articles →
-              </Link>
+              <div>
+                <Link
+                  href={`/author/${post.author.slug}`}
+                  className="font-bold text-zinc-900 transition hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
+                >
+                  {post.author.name}
+                </Link>
+                {post.author.bio && (
+                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    {post.author.bio}
+                  </p>
+                )}
+                <Link
+                  href={`/author/${post.author.slug}`}
+                  className="mt-2 inline-flex text-xs font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-400"
+                >
+                  View all articles →
+                </Link>
+              </div>
             </div>
           </div>
         </aside>
 
-        {/* ── Back nav ─────────────────────────────────────────────── */}
-        <div className="mt-10">
+        {/* ── Bottom share + nav ─────────────────────────────────── */}
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <path d="m15 18-6-6 6-6" />
             </svg>
             Back to all articles
           </Link>
+          <ShareButtons title={post.title} url={canonicalUrl} />
         </div>
 
       </main>

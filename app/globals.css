@@ -20,7 +20,11 @@
   }
 
   ::selection {
-    @apply bg-indigo-100 text-indigo-900;
+    @apply bg-indigo-100 text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950;
   }
 }
 
@@ -40,9 +44,24 @@
   .animate-slide-up-delay {
     animation: slide-up 0.5s 0.15s ease-out both;
   }
+
+  /* Dot grid overlay for hero sections */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Subtle line grid for light section backgrounds */
+  .bg-line-grid {
+    background-image:
+      linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }
 
 @layer components {
+  /* ── Badges ─────────────────────────────────────────────── */
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide;
   }
@@ -54,30 +73,59 @@
   .badge-cyan    { @apply bg-cyan-50    text-cyan-700    dark:bg-cyan-950    dark:text-cyan-300; }
   .badge-zinc    { @apply bg-zinc-100   text-zinc-600    dark:bg-zinc-800    dark:text-zinc-300; }
 
+  /* ── Cards ──────────────────────────────────────────────── */
   .card {
     @apply rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900;
   }
   .card-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md;
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:hover:border-zinc-700;
   }
 
+  /* ── Section eyebrow + title ────────────────────────────── */
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400;
+  }
+
+  /* ── Article prose ──────────────────────────────────────── */
   .prose-editorial {
     @apply text-zinc-700 dark:text-zinc-300;
   }
   .prose-editorial p {
-    @apply mb-6 text-[17px] leading-[1.8] tracking-[-0.01em];
+    @apply mb-6 text-[17px] leading-[1.85] tracking-[-0.01em];
   }
   .prose-editorial h2 {
-    @apply mb-4 mt-10 text-2xl font-bold text-zinc-900 dark:text-white;
+    @apply mb-4 mt-12 text-2xl font-bold text-zinc-900 dark:text-white;
   }
   .prose-editorial h3 {
     @apply mb-3 mt-8 text-xl font-semibold text-zinc-900 dark:text-white;
   }
+  .prose-editorial h4 {
+    @apply mb-2 mt-6 text-base font-semibold text-zinc-900 dark:text-white;
+  }
   .prose-editorial blockquote {
     @apply my-8 border-l-4 border-indigo-500 pl-6 text-lg italic text-zinc-600 dark:text-zinc-400;
   }
+  .prose-editorial ul {
+    @apply mb-6 ml-5 list-disc space-y-1.5 text-[17px] leading-relaxed;
+  }
+  .prose-editorial ol {
+    @apply mb-6 ml-5 list-decimal space-y-1.5 text-[17px] leading-relaxed;
+  }
+  .prose-editorial a {
+    @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400 dark:decoration-indigo-700 dark:hover:decoration-indigo-400;
+  }
+  .prose-editorial strong {
+    @apply font-semibold text-zinc-900 dark:text-white;
+  }
+  .prose-editorial code {
+    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200;
+  }
+  .prose-editorial hr {
+    @apply my-10 border-zinc-200 dark:border-zinc-800;
+  }
 }
 
+/* ── Keyframes ──────────────────────────────────────────────────── */
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -93,7 +141,10 @@
   100% { background-position:  200% 0; }
 }
 
+/* ── Custom scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { border-radius: 9999px; background: #d4d4d8; }
 ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }

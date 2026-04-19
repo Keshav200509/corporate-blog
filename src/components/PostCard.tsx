@@ -1,19 +1,19 @@
 import Link from "next/link";
 import type { BlogPost } from "../blog/types";
 
-/* ── Helpers ─────────────────────────────────────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────────────────── */
 
-export const CATEGORY_COLORS: Record<string, { badge: string; accent: string }> = {
-  engineering: { badge: "badge badge-indigo",  accent: "bg-indigo-500"  },
-  seo:         { badge: "badge badge-emerald", accent: "bg-emerald-500" },
-  operations:  { badge: "badge badge-amber",   accent: "bg-amber-500"   },
-  performance: { badge: "badge badge-rose",    accent: "bg-rose-500"    },
-  strategy:    { badge: "badge badge-violet",  accent: "bg-violet-500"  },
-  marketing:   { badge: "badge badge-cyan",    accent: "bg-cyan-500"    },
+export const CATEGORY_COLORS: Record<string, { badge: string; accent: string; glow: string }> = {
+  engineering: { badge: "badge badge-indigo",  accent: "bg-indigo-500",  glow: "bg-indigo-600/30"  },
+  seo:         { badge: "badge badge-emerald", accent: "bg-emerald-500", glow: "bg-emerald-600/25" },
+  operations:  { badge: "badge badge-amber",   accent: "bg-amber-500",   glow: "bg-amber-600/25"   },
+  performance: { badge: "badge badge-rose",    accent: "bg-rose-500",    glow: "bg-rose-600/25"    },
+  strategy:    { badge: "badge badge-violet",  accent: "bg-violet-500",  glow: "bg-violet-600/25"  },
+  marketing:   { badge: "badge badge-cyan",    accent: "bg-cyan-500",    glow: "bg-cyan-600/25"    },
 };
 
 export function categoryColor(slug: string) {
-  return CATEGORY_COLORS[slug] ?? { badge: "badge badge-zinc", accent: "bg-zinc-400" };
+  return CATEGORY_COLORS[slug] ?? { badge: "badge badge-zinc", accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
 }
 
 export function initials(name: string) {
@@ -38,7 +38,7 @@ export function formatDate(iso: string | null) {
   });
 }
 
-/* ── PostCard variants ────────────────────────────────────────────────── */
+/* ── PostCard variants ────────────────────────────────────────────── */
 
 type Variant = "default" | "featured" | "compact" | "horizontal";
 
@@ -50,16 +50,20 @@ interface Props {
 
 export default function PostCard({ post, variant = "default", index = 0 }: Props) {
   const primary = post.categories[0];
-  const color = primary ? categoryColor(primary.slug) : { badge: "badge badge-zinc", accent: "bg-zinc-400" };
+  const color = primary ? categoryColor(primary.slug) : { badge: "badge badge-zinc", accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
   const rt = readingTime(post.content);
 
   /* ── Featured (hero banner) ── */
   if (variant === "featured") {
     return (
-      <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 p-8 text-white shadow-xl md:p-12 animate-slide-up">
-        {/* Decorative orb */}
-        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full bg-indigo-600/20 blur-3xl" />
-        <div className="relative">
+      <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 shadow-xl animate-slide-up">
+        {/* Dot grid texture */}
+        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-60" />
+        {/* Color glow orb */}
+        <div className={`pointer-events-none absolute right-0 top-0 h-80 w-80 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl ${color.glow}`} />
+        <div className="pointer-events-none absolute -bottom-10 left-20 h-60 w-60 rounded-full bg-violet-600/10 blur-[70px]" />
+
+        <div className="relative p-8 text-white md:p-12">
           {primary && (
             <span className={`${color.badge} mb-4 inline-flex`}>{primary.name}</span>
           )}
@@ -71,25 +75,32 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
             {post.excerpt}
           </p>
+
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-[10px] font-bold text-white">
+            <span className="flex items-center gap-2">
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
                 {initials(post.author.name)}
               </span>
-              {post.author.name}
+              <Link
+                href={`/author/${post.author.slug}`}
+                className="font-medium transition hover:text-white"
+              >
+                {post.author.name}
+              </Link>
             </span>
-            <span>·</span>
+            <span aria-hidden>·</span>
             <span>{rt} min read</span>
             {post.publishedAt && (
               <>
-                <span>·</span>
-                <span>{formatDate(post.publishedAt)}</span>
+                <span aria-hidden>·</span>
+                <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
               </>
             )}
           </div>
+
           <Link
             href={`/blog/${post.slug}`}
-            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-indigo-50"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-indigo-50"
           >
             Read story <span aria-hidden>→</span>
           </Link>
@@ -102,12 +113,17 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
   if (variant === "compact") {
     return (
       <article
-        className="flex items-start gap-4 border-b border-zinc-100 py-4 last:border-0 dark:border-zinc-800"
+        className="flex items-start gap-4 py-4 last:border-0 border-b border-zinc-100 dark:border-zinc-800"
         style={{ animationDelay: `${index * 60}ms` }}
       >
-        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold text-white ${color.accent}`}>
+        <Link
+          href={`/blog/${post.slug}`}
+          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold text-white transition hover:opacity-80 ${color.accent}`}
+          tabIndex={-1}
+          aria-hidden
+        >
           {initials(post.author.name)}
-        </div>
+        </Link>
         <div className="min-w-0">
           {primary && (
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
@@ -138,7 +154,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
         <div className={`mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white ${color.accent}`}>
           {initials(post.author.name)}
         </div>
-        <div>
+        <div className="min-w-0">
           {primary && <span className={color.badge}>{primary.name}</span>}
           <h2 className="mt-1.5 text-lg font-bold text-zinc-900 dark:text-white">
             <Link
@@ -148,7 +164,9 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
               {post.title}
             </Link>
           </h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{post.excerpt}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 line-clamp-2">
+            {post.excerpt}
+          </p>
           <p className="mt-2 text-xs text-zinc-400">
             {post.author.name} · {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
           </p>
@@ -160,7 +178,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
   /* ── Default (card grid) ── */
   return (
     <article
-      className="card card-hover flex flex-col"
+      className="card card-hover group flex flex-col"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Top accent stripe */}
@@ -175,22 +193,33 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
             {post.title}
           </Link>
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
           {post.excerpt}
         </p>
-        <div className="mt-5 flex items-center gap-2.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-          <div className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
-            {initials(post.author.name)}
+        <div className="mt-5 flex items-center justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
+          <div className="flex items-center gap-2">
+            <div className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
+              {initials(post.author.name)}
+            </div>
+            <div className="min-w-0">
+              <Link
+                href={`/author/${post.author.slug}`}
+                className="block text-xs font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
+              >
+                {post.author.name}
+              </Link>
+              <p className="text-[11px] text-zinc-400">
+                {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <Link
-              href={`/author/${post.author.slug}`}
-              className="text-xs font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-            >
-              {post.author.name}
-            </Link>
-            <p className="text-[11px] text-zinc-400">{rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}</p>
-          </div>
+          <Link
+            href={`/blog/${post.slug}`}
+            className="shrink-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-[11px] font-semibold text-zinc-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 dark:border-zinc-700 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-400"
+            aria-label={`Read: ${post.title}`}
+          >
+            Read →
+          </Link>
         </div>
       </div>
     </article>
