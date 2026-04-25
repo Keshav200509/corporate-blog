@@ -67,11 +67,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           aria-label="Breadcrumb"
         >
           <Link href="/" className="transition hover:text-zinc-900 dark:hover:text-white">Home</Link>
-          <span aria-hidden>/</span>
+          <span aria-hidden={true}>/</span>
           <Link href="/blog" className="transition hover:text-zinc-900 dark:hover:text-white">Blog</Link>
           {primary && (
             <>
-              <span aria-hidden>/</span>
+              <span aria-hidden={true}>/</span>
               <Link
                 href={`/category/${primary.slug}`}
                 className="transition hover:text-zinc-900 dark:hover:text-white"
@@ -119,11 +119,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   {post.author.name}
                 </Link>
               </span>
-              <span aria-hidden>·</span>
+              <span aria-hidden={true}>·</span>
               <span>{rt} min read</span>
               {post.publishedAt && (
                 <>
-                  <span aria-hidden>·</span>
+                  <span aria-hidden={true}>·</span>
                   <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
                 </>
               )}
@@ -222,7 +222,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             href="/blog"
             className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden={true}>
               <path d="m15 18-6-6 6-6" />
             </svg>
             Back to all articles

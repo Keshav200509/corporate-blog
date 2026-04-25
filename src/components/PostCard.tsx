@@ -121,11 +121,11 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
                 {post.author.name}
               </Link>
             </span>
-            <span aria-hidden>·</span>
+            <span aria-hidden={true}>·</span>
             <span>{rt} min read</span>
             {post.publishedAt && (
               <>
-                <span aria-hidden>·</span>
+                <span aria-hidden={true}>·</span>
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
               </>
             )}
@@ -136,7 +136,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
             className="mt-6 inline-flex items-center gap-2 rounded-[9px] bg-white px-6 py-3 text-[15px] font-semibold text-zinc-900 transition hover:bg-indigo-50"
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-indigo-50"
           >
-            Read story →
+            Read story {"→"}
           </Link>
         </div>
       </article>
@@ -253,7 +253,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
           >
             {post.author.name}
           </Link>
-          <span className="text-zinc-300 dark:text-zinc-600" aria-hidden>·</span>
+          <span className="text-zinc-300 dark:text-zinc-600" aria-hidden={true}>·</span>
           <span className="text-[13px] text-zinc-400">
             {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
           </span>

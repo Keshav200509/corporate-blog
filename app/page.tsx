@@ -178,7 +178,7 @@ export default async function HomePage() {
               href="/blog"
               className="text-sm font-semibold text-zinc-500 transition hover:text-zinc-900 dark:hover:text-white"
             >
-              View all →
+              View all {"→"}
             </Link>
           </div>
           <PostCard post={featured} variant="featured" />
@@ -208,7 +208,7 @@ export default async function HomePage() {
                 href="/blog"
                 className="shrink-0 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
               >
-                All posts →
+                All posts {"→"}
               </Link>
             )}
           </div>
@@ -226,7 +226,7 @@ export default async function HomePage() {
               href="/blog"
               className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
             >
-              View full feed →
+              View full feed {"→"}
             </Link>
           )}
         </div>
@@ -273,7 +273,7 @@ export default async function HomePage() {
               className="mt-4 block text-center text-xs font-semibold transition hover:text-white"
               style={{ color: "rgba(255,255,255,0.4)" }}
             >
-              All topics →
+              All topics {"→"}
             </Link>
           </div>
 
@@ -302,7 +302,7 @@ export default async function HomePage() {
               href="/author"
               className="mt-3 block text-xs font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-400"
             >
-              Meet the team →
+              Meet the team {"→"}
             </Link>
           </div>
 
@@ -317,7 +317,7 @@ export default async function HomePage() {
               href="/explore"
               className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-400"
             >
-              Open explorer →
+              Open explorer {"→"}
             </Link>
           </div>
         </aside>

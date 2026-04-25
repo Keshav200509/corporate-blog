@@ -94,7 +94,7 @@ export default function Footer() {
               © {year} The Corporate Blog. SEO-first publishing platform.
             </p>
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden={true} />
               <span className="text-xs text-zinc-400 dark:text-zinc-600">All systems operational</span>
             </div>
           </div>
