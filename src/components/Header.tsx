@@ -46,6 +46,11 @@ export default function Header() {
               borderRadius: "10px",
             }}
           >
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-3">
+
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-sm">
             CB
           </span>
           <span className="hidden text-[18px] font-bold tracking-tight text-zinc-900 sm:block dark:text-white">
@@ -71,6 +76,9 @@ export default function Header() {
         </nav>
 
         {/* Right: search + theme toggle + admin */}
+
+        {/* Search + theme + admin */}
+
         <div className="hidden md:flex items-center gap-2">
           {/* Search input 240px wide, separate from button — design spec */}
           <form action="/search" className="flex items-center gap-2">
@@ -81,6 +89,8 @@ export default function Header() {
               minLength={2}
               placeholder="Search articles..."
               className="w-[240px] rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
+              placeholder="Search…"
+              className="w-36 rounded-l-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-indigo-500 transition focus:ring-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
             />
             {/* Search button: #4f46e5, 36×36px, border-radius 8px */}
             <button
@@ -98,6 +108,12 @@ export default function Header() {
           <ThemeToggle />
 
           {/* Admin — #71717a, border #e4e4e7, radius 8px, padding 6px 14px */}
+              className="rounded-r-lg border border-l-0 border-indigo-600 bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </button>
+          </form>
+          <ThemeToggle />
           <Link
             href="/admin/login"
             className="rounded-lg border border-zinc-200 px-3.5 py-1.5 text-sm font-medium text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100"
@@ -107,11 +123,13 @@ export default function Header() {
         </div>
 
         {/* Mobile: theme + hamburger */}
+        {/* Mobile: theme toggle + hamburger */}
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
             onClick={() => setOpen(!open)}
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >

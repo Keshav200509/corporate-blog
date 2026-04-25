@@ -59,6 +59,22 @@ export default async function HomePage() {
             <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl lg:text-[72px]">
               A living newsroom for{" "}
               <span style={{ color: "#818cf8" }}>strategy</span>{" "}
+      {/* ── Hero ────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-8 py-16 text-white md:px-14 md:py-24">
+        {/* Background textures */}
+        <div className="pointer-events-none absolute inset-0 bg-dot-grid" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 rounded-full bg-indigo-600/20 blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-20 left-10 h-72 w-72 rounded-full bg-violet-600/15 blur-[60px]" />
+
+        <div className="relative z-10 grid gap-12 md:grid-cols-[1.3fr_0.9fr]">
+          <div className="space-y-6 animate-slide-up">
+            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-indigo-300">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-indigo-400" aria-hidden />
+              Executive Intelligence Network
+            </span>
+            <h1 className="text-5xl font-extrabold leading-[1.08] tracking-tight md:text-6xl lg:text-7xl">
+              A living newsroom for{" "}
+              <span className="text-gradient-light">strategy</span>{" "}
               &amp; insight.
             </h1>
 
@@ -87,6 +103,22 @@ export default async function HomePage() {
                 Explore workflows
               </Link>
             </div>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="m20 6-11 11-5-5"/></svg>
+                No paywalls
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="m20 6-11 11-5-5"/></svg>
+                Verified authors
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="m20 6-11 11-5-5"/></svg>
+                Weekly updates
+              </span>
+            </div>
           </div>
 
           {/* Right column — stat cards stacked, 12px gap */}
@@ -103,6 +135,16 @@ export default async function HomePage() {
                   background: "rgba(255,255,255,0.07)",
                   border: "1px solid rgba(255,255,255,0.10)",
                 }}
+          {/* Stats */}
+          <div className="animate-slide-up-delay grid grid-cols-1 gap-4 self-center">
+            {[
+              { value: stats.posts,      label: "Published Posts",  color: "from-indigo-500/20 to-indigo-600/10" },
+              { value: stats.authors,    label: "Expert Authors",    color: "from-violet-500/20 to-violet-600/10" },
+              { value: stats.categories, label: "Topic Categories",  color: "from-cyan-500/20 to-cyan-600/10"    },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className={`rounded-2xl border border-white/10 bg-gradient-to-br ${stat.color} px-6 py-5 backdrop-blur-sm`}
               >
                 {/* Stat number — 40px/800 */}
                 <p className="text-[40px] font-extrabold tabular-nums leading-none">
@@ -128,6 +170,7 @@ export default async function HomePage() {
             <div>
               <p className="section-eyebrow">Featured Story</p>
               <h2 className="mt-1 text-[28px] font-bold text-zinc-900 dark:text-white">
+              <h2 className="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">
                 Editor&apos;s Pick
               </h2>
             </div>
@@ -155,6 +198,10 @@ export default async function HomePage() {
               <p className="mt-1 text-[15px] text-zinc-500">
                 Breaking intelligence across all verticals
               </p>
+              <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+                Latest from the wire
+              </h2>
+              <p className="mt-1 text-sm text-zinc-500">Breaking intelligence across all verticals</p>
             </div>
             {wire.length > 0 && (
               <Link
@@ -192,6 +239,7 @@ export default async function HomePage() {
             className="rounded-2xl p-6 text-white"
             style={{ background: "linear-gradient(135deg, #0f172a, #1e1b4b)" }}
           >
+          <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 p-6 text-white">
             <h3 className="text-lg font-bold">Topic Radar</h3>
             <p className="mt-1 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
               Navigate by expertise area
@@ -217,6 +265,7 @@ export default async function HomePage() {
                 <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
                   No categories yet.
                 </p>
+                <p className="text-sm text-slate-500">No categories yet.</p>
               )}
             </div>
             <Link
@@ -262,6 +311,7 @@ export default async function HomePage() {
             <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Deep intelligence</h3>
             <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
               Editorial workflows, operational readiness, and category launchpads.
+              Explore editorial workflows, operational readiness, and category launchpads.
             </p>
             <Link
               href="/explore"

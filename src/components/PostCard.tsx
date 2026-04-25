@@ -20,6 +20,17 @@ export const CATEGORY_COLORS: Record<string, { badge: string; accent: string; gl
 
 export function categoryColor(slug: string) {
   return CATEGORY_COLORS[slug] ?? { badge: UNIFIED_TAG, accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
+export const CATEGORY_COLORS: Record<string, { badge: string; accent: string; glow: string }> = {
+  engineering: { badge: "badge badge-indigo",  accent: "bg-indigo-500",  glow: "bg-indigo-600/30"  },
+  seo:         { badge: "badge badge-emerald", accent: "bg-emerald-500", glow: "bg-emerald-600/25" },
+  operations:  { badge: "badge badge-amber",   accent: "bg-amber-500",   glow: "bg-amber-600/25"   },
+  performance: { badge: "badge badge-rose",    accent: "bg-rose-500",    glow: "bg-rose-600/25"    },
+  strategy:    { badge: "badge badge-violet",  accent: "bg-violet-500",  glow: "bg-violet-600/25"  },
+  marketing:   { badge: "badge badge-cyan",    accent: "bg-cyan-500",    glow: "bg-cyan-600/25"    },
+};
+
+export function categoryColor(slug: string) {
+  return CATEGORY_COLORS[slug] ?? { badge: "badge badge-zinc", accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
 }
 
 export function initials(name: string) {
@@ -57,6 +68,7 @@ interface Props {
 export default function PostCard({ post, variant = "default", index = 0 }: Props) {
   const primary = post.categories[0];
   const color = primary ? categoryColor(primary.slug) : { badge: UNIFIED_TAG, accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
+  const color = primary ? categoryColor(primary.slug) : { badge: "badge badge-zinc", accent: "bg-zinc-400", glow: "bg-zinc-400/20" };
   const rt = readingTime(post.content);
 
   /* ── Featured (dark hero card) ── */
@@ -70,7 +82,15 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
         <div className={`pointer-events-none absolute right-0 top-0 h-80 w-80 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl ${color.glow}`} />
         <div className="pointer-events-none absolute -bottom-10 left-20 h-60 w-60 rounded-full bg-violet-600/10 blur-[70px]" />
 
-        <div className="relative p-8 md:p-12">
+      
+      <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 shadow-xl animate-slide-up">
+        {/* Dot grid texture */}
+        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-60" />
+        {/* Color glow orb */}
+        <div className={`pointer-events-none absolute right-0 top-0 h-80 w-80 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl ${color.glow}`} />
+        <div className="pointer-events-none absolute -bottom-10 left-20 h-60 w-60 rounded-full bg-violet-600/10 blur-[70px]" />
+
+        <div className="relative p-8 text-white md:p-12">
           {primary && (
             <span className={`${color.badge} mb-4 inline-flex`}>{primary.name}</span>
           )}
@@ -89,6 +109,15 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
                 {initials(post.author.name)}
               </span>
               <Link href={`/author/${post.author.slug}`} className="font-medium text-white/70 transition hover:text-white">
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
+            <span className="flex items-center gap-2">
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
+                {initials(post.author.name)}
+              </span>
+              <Link
+                href={`/author/${post.author.slug}`}
+                className="font-medium transition hover:text-white"
+              >
                 {post.author.name}
               </Link>
             </span>
@@ -105,6 +134,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
           <Link
             href={`/blog/${post.slug}`}
             className="mt-6 inline-flex items-center gap-2 rounded-[9px] bg-white px-6 py-3 text-[15px] font-semibold text-zinc-900 transition hover:bg-indigo-50"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-indigo-50"
           >
             Read story →
           </Link>
@@ -117,7 +147,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
   if (variant === "compact") {
     return (
       <article
-        className="flex items-start gap-4 border-b border-zinc-100 py-4 last:border-0 dark:border-zinc-800"
+        className="flex items-start gap-4 py-4 last:border-0 border-b border-zinc-100 dark:border-zinc-800"
         style={{ animationDelay: `${index * 60}ms` }}
       >
         <Link
@@ -172,6 +202,10 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
             {post.excerpt}
           </p>
           <p className="mt-2 text-[13px] text-zinc-400">
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 line-clamp-2">
+            {post.excerpt}
+          </p>
+          <p className="mt-2 text-xs text-zinc-400">
             {post.author.name} · {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
           </p>
         </div>
@@ -183,6 +217,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
   return (
     <article
       className="card card-hover group flex flex-col overflow-hidden"
+      className="card card-hover group flex flex-col"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Top accent bar — height 4px, color-coded by topic */}
@@ -221,6 +256,33 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
           <span className="text-[13px] text-zinc-400">
             {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
           </span>
+        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+          {post.excerpt}
+        </p>
+        <div className="mt-5 flex items-center justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
+          <div className="flex items-center gap-2">
+            <div className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white ${color.accent}`}>
+              {initials(post.author.name)}
+            </div>
+            <div className="min-w-0">
+              <Link
+                href={`/author/${post.author.slug}`}
+                className="block text-xs font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
+              >
+                {post.author.name}
+              </Link>
+              <p className="text-[11px] text-zinc-400">
+                {rt} min read{post.publishedAt ? ` · ${formatDate(post.publishedAt)}` : ""}
+              </p>
+            </div>
+          </div>
+          <Link
+            href={`/blog/${post.slug}`}
+            className="shrink-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-[11px] font-semibold text-zinc-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 dark:border-zinc-700 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-400"
+            aria-label={`Read: ${post.title}`}
+          >
+            Read →
+          </Link>
         </div>
       </div>
     </article>
