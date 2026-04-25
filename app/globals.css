@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --color-brand: 99 102 241;
-    --font-inter: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --color-brand: 79 70 229; /* #4f46e5 */
+    --font-inter: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   html {
@@ -14,8 +14,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Design token: Surface Muted #fafafa */
   body {
-    @apply bg-white text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+    @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -24,6 +25,8 @@
   }
 
   *:focus-visible {
+
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-zinc-50 dark:ring-offset-zinc-950;
     @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950;
   }
 }
@@ -45,11 +48,21 @@
     animation: slide-up 0.5s 0.15s ease-out both;
   }
 
+  /* Hero badge pulsing dot */
+  .animate-pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  /* Dot grid overlay for hero backgrounds */
   /* Dot grid overlay for hero sections */
   .bg-dot-grid {
     background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
     background-size: 24px 24px;
   }
+}
+
+@layer components {
+  /* ── Badges — Design token: Tag BG #eef2ff / Tag Text #4338ca ── */
 
   /* Subtle line grid for light section backgrounds */
   .bg-line-grid {
@@ -63,8 +76,13 @@
 @layer components {
   /* ── Badges ─────────────────────────────────────────────── */
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide;
   }
+  /* Unified tag style per design spec */
+  .badge-tag {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+  /* Category-specific (kept for dark variants / explore page) */
   .badge-indigo  { @apply bg-indigo-50  text-indigo-700  dark:bg-indigo-950  dark:text-indigo-300; }
   .badge-amber   { @apply bg-amber-50   text-amber-700   dark:bg-amber-950   dark:text-amber-300; }
   .badge-emerald { @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300; }
@@ -73,11 +91,26 @@
   .badge-cyan    { @apply bg-cyan-50    text-cyan-700    dark:bg-cyan-950    dark:text-cyan-300; }
   .badge-zinc    { @apply bg-zinc-100   text-zinc-600    dark:bg-zinc-800    dark:text-zinc-300; }
 
+  /* ── Cards — Design token: border #e4e4e7, radius 16px ─────── */
   /* ── Cards ──────────────────────────────────────────────── */
   .card {
-    @apply rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900;
+    @apply rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
+  /* Design token: Card hover shadow 0 8px 24px rgba(0,0,0,0.10) + translateY(-2px) */
   .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5;
+  }
+  .card-hover:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  }
+
+  /* ── Section eyebrow ────────────────────────────────────────── */
+  .section-eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400;
+  }
+
+  /* ── Article prose ──────────────────────────────────────────── */
     @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:hover:border-zinc-700;
   }
 
@@ -112,6 +145,7 @@
     @apply mb-6 ml-5 list-decimal space-y-1.5 text-[17px] leading-relaxed;
   }
   .prose-editorial a {
+    @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400;
     @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400 dark:decoration-indigo-700 dark:hover:decoration-indigo-400;
   }
   .prose-editorial strong {
@@ -139,6 +173,12 @@
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
+}
+
+/* Design spec: Hero badge pulsing dot, 2s loop */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
 }
 
 /* ── Custom scrollbar ───────────────────────────────────────────── */

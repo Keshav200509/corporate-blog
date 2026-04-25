@@ -30,12 +30,22 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-200 ${
-        scrolled
-          ? "border-b border-zinc-200/80 bg-white/95 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95"
-          : "bg-white dark:bg-zinc-950"
+      className={`sticky top-0 z-40 border-b border-zinc-200 bg-white transition-shadow dark:border-zinc-800 dark:bg-zinc-950 ${
+        scrolled ? "shadow-[0_1px_3px_rgba(0,0,0,0.08)]" : ""
       }`}
     >
+      {/* Design spec: height 60px */}
+      <div className="mx-auto flex h-[60px] w-full max-w-7xl items-center justify-between gap-4 px-6">
+
+        {/* Logo — gradient 40×40, border-radius 10px, "CB" 16px/700, wordmark 18px/700 */}
+        <Link href="/" className="flex shrink-0 items-center gap-3">
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center text-sm font-bold text-white"
+            style={{
+              background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+              borderRadius: "10px",
+            }}
+          >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-3">
 
         {/* Logo */}
@@ -43,21 +53,21 @@ export default function Header() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-sm">
             CB
           </span>
-          <span className="hidden text-[15px] font-bold tracking-tight text-zinc-900 sm:block dark:text-white">
+          <span className="hidden text-[18px] font-bold tracking-tight text-zinc-900 sm:block dark:text-white">
             The Corporate Blog
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-0.5">
+        {/* Desktop nav — active: #eef2ff bg, #4f46e5 text, radius 8px, padding 6px 14px */}
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-1">
           {NAV.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded-md px-3.5 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-lg px-3.5 py-1.5 text-[15px] font-medium transition-colors ${
                 isActive(link.href)
-                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
-                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
+                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
               }`}
             >
               {link.label}
@@ -65,20 +75,39 @@ export default function Header() {
           ))}
         </nav>
 
+        {/* Right: search + theme toggle + admin */}
+
         {/* Search + theme + admin */}
+
         <div className="hidden md:flex items-center gap-2">
-          <form action="/search" className="flex items-center">
+          {/* Search input 240px wide, separate from button — design spec */}
+          <form action="/search" className="flex items-center gap-2">
             <input
               name="q"
               type="search"
               required
               minLength={2}
+              placeholder="Search articles..."
+              className="w-[240px] rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
               placeholder="Search…"
               className="w-36 rounded-l-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-indigo-500 transition focus:ring-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
             />
+            {/* Search button: #4f46e5, 36×36px, border-radius 8px */}
             <button
               type="submit"
               aria-label="Search"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white transition hover:bg-indigo-500"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </button>
+          </form>
+
+          <ThemeToggle />
+
+          {/* Admin — #71717a, border #e4e4e7, radius 8px, padding 6px 14px */}
               className="rounded-r-lg border border-l-0 border-indigo-600 bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -87,17 +116,19 @@ export default function Header() {
           <ThemeToggle />
           <Link
             href="/admin/login"
-            className="rounded-lg border border-zinc-200 px-3 py-2 text-xs font-semibold text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+            className="rounded-lg border border-zinc-200 px-3.5 py-1.5 text-sm font-medium text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             Admin
           </Link>
         </div>
 
+        {/* Mobile: theme + hamburger */}
         {/* Mobile: theme toggle + hamburger */}
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
             onClick={() => setOpen(!open)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
@@ -114,14 +145,14 @@ export default function Header() {
       {/* Mobile menu */}
       {open && (
         <div className="border-t border-zinc-200 bg-white px-6 py-4 md:hidden dark:border-zinc-800 dark:bg-zinc-950 animate-slide-up">
-          <nav className="flex flex-col gap-0.5">
+          <nav className="flex flex-col gap-1">
             {NAV.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   isActive(link.href)
-                    ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                    ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
                     : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 }`}
               >
@@ -141,8 +172,8 @@ export default function Header() {
               type="search"
               required
               minLength={2}
-              placeholder="Search articles…"
-              className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+              placeholder="Search articles..."
+              className="flex-1 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
             />
             <button type="submit" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">
               Go
