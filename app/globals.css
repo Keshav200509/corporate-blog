@@ -26,6 +26,7 @@
 
   *:focus-visible {
     @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-zinc-50 dark:ring-offset-zinc-950;
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950;
   }
 }
 
@@ -60,6 +61,18 @@
 
 @layer components {
   /* ── Badges — Design token: Tag BG #eef2ff / Tag Text #4338ca ── */
+
+  /* Subtle line grid for light section backgrounds */
+  .bg-line-grid {
+    background-image:
+      linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@layer components {
+  /* ── Badges ─────────────────────────────────────────────── */
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide;
   }
@@ -76,7 +89,8 @@
   .badge-cyan    { @apply bg-cyan-50    text-cyan-700    dark:bg-cyan-950    dark:text-cyan-300; }
   .badge-zinc    { @apply bg-zinc-100   text-zinc-600    dark:bg-zinc-800    dark:text-zinc-300; }
 
-  /* ── Cards — Design token: border #e4e4e7, radius 16px ─────── */
+
+
   .card {
     @apply rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -95,6 +109,15 @@
   }
 
   /* ── Article prose ──────────────────────────────────────────── */
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:hover:border-zinc-700;
+  }
+
+  /* ── Section eyebrow + title ────────────────────────────── */
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400;
+  }
+
+  /* ── Article prose ──────────────────────────────────────── */
   .prose-editorial {
     @apply text-zinc-700 dark:text-zinc-300;
   }
@@ -107,6 +130,9 @@
   .prose-editorial h3 {
     @apply mb-3 mt-8 text-xl font-semibold text-zinc-900 dark:text-white;
   }
+  .prose-editorial h4 {
+    @apply mb-2 mt-6 text-base font-semibold text-zinc-900 dark:text-white;
+  }
   .prose-editorial blockquote {
     @apply my-8 border-l-4 border-indigo-500 pl-6 text-lg italic text-zinc-600 dark:text-zinc-400;
   }
@@ -118,6 +144,7 @@
   }
   .prose-editorial a {
     @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400;
+    @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400 dark:decoration-indigo-700 dark:hover:decoration-indigo-400;
   }
   .prose-editorial strong {
     @apply font-semibold text-zinc-900 dark:text-white;
