@@ -124,7 +124,7 @@ export default function PostCard({ post, variant = "default", index = 0 }: Props
           href={`/blog/${post.slug}`}
           className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold text-white transition hover:opacity-80 ${color.accent}`}
           tabIndex={-1}
-          aria-hidden
+          aria-hidden={true}
         >
           {initials(post.author.name)}
         </Link>

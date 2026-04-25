@@ -50,7 +50,7 @@ export default async function HomePage() {
               {/* Design spec: pulsing green dot, 8px, #10b981 */}
               <span
                 className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse-dot"
-                aria-hidden
+                aria-hidden={true}
               />
               Executive Intelligence Network
             </span>
