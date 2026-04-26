@@ -4,14 +4,185 @@
 
 @layer base {
   :root {
-    --color-brand: 99 102 241;
+    --color-brand: 79 70 229; /* #4f46e5 */
+    --font-inter: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Design token: Surface Muted #fafafa */
   body {
-    @apply bg-white text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+    @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-indigo-100 text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-zinc-50 dark:ring-offset-zinc-950;
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950;
   }
 }
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent;
+  }
+  .text-gradient-light {
+    @apply bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out both;
+  }
+  .animate-slide-up-delay {
+    animation: slide-up 0.5s 0.15s ease-out both;
+  }
+
+  /* Hero badge pulsing dot */
+  .animate-pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  /* Dot grid overlay for hero backgrounds */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+@layer components {
+  /* ── Badges — Design token: Tag BG #eef2ff / Tag Text #4338ca ── */
+
+  /* Subtle line grid for light section backgrounds */
+  .bg-line-grid {
+    background-image:
+      linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@layer components {
+  /* ── Badges ─────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide;
+  }
+  /* Unified tag style per design spec */
+  .badge-tag {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+  /* Category-specific (kept for dark variants / explore page) */
+  .badge-indigo  { @apply bg-indigo-50  text-indigo-700  dark:bg-indigo-950  dark:text-indigo-300; }
+  .badge-amber   { @apply bg-amber-50   text-amber-700   dark:bg-amber-950   dark:text-amber-300; }
+  .badge-emerald { @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300; }
+  .badge-rose    { @apply bg-rose-50    text-rose-700    dark:bg-rose-950    dark:text-rose-300; }
+  .badge-violet  { @apply bg-violet-50  text-violet-700  dark:bg-violet-950  dark:text-violet-300; }
+  .badge-cyan    { @apply bg-cyan-50    text-cyan-700    dark:bg-cyan-950    dark:text-cyan-300; }
+  .badge-zinc    { @apply bg-zinc-100   text-zinc-600    dark:bg-zinc-800    dark:text-zinc-300; }
+
+
+
+  .card {
+    @apply rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  /* Design token: Card hover shadow 0 8px 24px rgba(0,0,0,0.10) + translateY(-2px) */
+  .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5;
+  }
+  .card-hover:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  }
+
+  /* ── Section eyebrow ────────────────────────────────────────── */
+  .section-eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400;
+  }
+
+  /* ── Article prose ──────────────────────────────────────────── */
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:hover:border-zinc-700;
+  }
+
+  /* ── Section eyebrow + title ────────────────────────────── */
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400;
+  }
+
+  /* ── Article prose ──────────────────────────────────────── */
+  .prose-editorial {
+    @apply text-zinc-700 dark:text-zinc-300;
+  }
+  .prose-editorial p {
+    @apply mb-6 text-[17px] leading-[1.85] tracking-[-0.01em];
+  }
+  .prose-editorial h2 {
+    @apply mb-4 mt-12 text-2xl font-bold text-zinc-900 dark:text-white;
+  }
+  .prose-editorial h3 {
+    @apply mb-3 mt-8 text-xl font-semibold text-zinc-900 dark:text-white;
+  }
+  .prose-editorial h4 {
+    @apply mb-2 mt-6 text-base font-semibold text-zinc-900 dark:text-white;
+  }
+  .prose-editorial blockquote {
+    @apply my-8 border-l-4 border-indigo-500 pl-6 text-lg italic text-zinc-600 dark:text-zinc-400;
+  }
+  .prose-editorial ul {
+    @apply mb-6 ml-5 list-disc space-y-1.5 text-[17px] leading-relaxed;
+  }
+  .prose-editorial ol {
+    @apply mb-6 ml-5 list-decimal space-y-1.5 text-[17px] leading-relaxed;
+  }
+  .prose-editorial a {
+    @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400;
+    @apply text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:decoration-indigo-600 dark:text-indigo-400 dark:decoration-indigo-700 dark:hover:decoration-indigo-400;
+  }
+  .prose-editorial strong {
+    @apply font-semibold text-zinc-900 dark:text-white;
+  }
+  .prose-editorial code {
+    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200;
+  }
+  .prose-editorial hr {
+    @apply my-10 border-zinc-200 dark:border-zinc-800;
+  }
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* Design spec: Hero badge pulsing dot, 2s loop */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* ── Custom scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: 9999px; background: #d4d4d8; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }

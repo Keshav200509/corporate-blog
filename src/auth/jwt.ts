@@ -85,13 +85,18 @@ export function verifyToken(token: string): JwtPayload | null {
   }
 
   const expectedSignature = sign(`${encodedHeader}.${encodedBody}`, secret);
-  const signatureMatches = timingSafeEqual(Buffer.from(encodedSignature), Buffer.from(expectedSignature));
-
-  if (!signatureMatches) {
+  const actualBuf = Buffer.from(encodedSignature);
+  const expectedBuf = Buffer.from(expectedSignature);
+  if (actualBuf.length !== expectedBuf.length || !timingSafeEqual(actualBuf, expectedBuf)) {
     return null;
   }
 
-  const payload = JSON.parse(base64UrlDecode(encodedBody)) as JwtPayload;
+  let payload: JwtPayload;
+  try {
+    payload = JSON.parse(base64UrlDecode(encodedBody)) as JwtPayload;
+  } catch {
+    return null;
+  }
 
   if (!payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) {
     return null;
