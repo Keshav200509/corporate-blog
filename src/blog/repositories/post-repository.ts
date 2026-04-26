@@ -66,14 +66,7 @@ export class PostRepository {
     return prisma.post.findMany({
       where: buildPublicWhere(filters),
       include: postInclude,
-      orderBy: [
-        {
-          publishedAt: "desc"
-        },
-        {
-          updatedAt: "desc"
-        }
-      ]
+      orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }]
     });
   }
 

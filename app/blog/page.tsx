@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getPublishedPosts } from "../../src/blog/data";
+import { listCategories } from "../../src/blog/services/category-service";
 import { getCanonicalUrl, getSiteName } from "../../src/blog/seo";
+import PostCard, { categoryColor } from "../../src/components/PostCard";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `Blog | ${getSiteName()}`,
@@ -14,38 +16,92 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogIndexPage() {
-  const posts = await getPublishedPosts();
+  const [posts, categories] = await Promise.all([
+    getPublishedPosts(),
+    listCategories()
+  ]);
+
+  const lead = posts[0];
+  const grid = posts.slice(1);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-12">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">The Corporate Blog</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-300">
-          Production-minded articles on platform engineering, SEO, and growth operations.
+    <main className="mx-auto max-w-7xl space-y-12 px-6 py-10">
+
+      {/* ── Page Header ──────────────────────────────────────────────── */}
+      <header className="space-y-2 animate-fade-in">
+        <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
+          The Corporate Blog
+        </p>
+        <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+          All Articles
+        </h1>
+        <p className="max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
+          Curated insights, deep dives, and market intelligence across engineering, strategy, SEO, and operations.
         </p>
       </header>
 
-      {posts.length === 0 ? (
-        <section className="rounded-xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-300">No published posts yet.</p>
-        </section>
-      ) : (
-        <section className="space-y-4" aria-label="Published posts">
-          {posts.map((post) => (
-            <article key={post.id} className="rounded-xl border border-zinc-200 p-5 shadow-sm dark:border-zinc-800">
-              <p className="text-xs uppercase tracking-wide text-zinc-500">
-                {post.categories[0]?.name ?? "General"}
-              </p>
-              <h2 className="mt-2 text-xl font-semibold">
-                <Link href={`/blog/${post.slug}`} className="hover:underline">
-                  {post.title}
+      {/* ── Category filter tabs ─────────────────────────────────────── */}
+      {categories.length > 0 && (
+        <section aria-label="Filter by category">
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/blog"
+              className="rounded-full border border-indigo-600 bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white transition"
+            >
+              All
+            </Link>
+            {categories.map((cat) => {
+              const color = categoryColor(cat.slug);
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/category/${cat.slug}`}
+                  className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition hover:opacity-80 ${color.badge}`}
+                >
+                  {cat.name}
+                  <span className="ml-1.5 opacity-60">{cat._count.postCategories}</span>
                 </Link>
-              </h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-            </article>
-          ))}
+              );
+            })}
+          </div>
         </section>
       )}
+
+      {/* ── Featured lead ────────────────────────────────────────────── */}
+      {lead && (
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Featured</span>
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          <PostCard post={lead} variant="featured" />
+        </section>
+      )}
+
+      {/* ── Post grid ────────────────────────────────────────────────── */}
+      {posts.length === 0 ? (
+        <section className="rounded-2xl border border-dashed border-zinc-300 p-14 text-center dark:border-zinc-700">
+          <p className="text-lg font-semibold text-zinc-500">No published posts yet.</p>
+          <p className="mt-2 text-sm text-zinc-400">Check back soon — great content is on its way.</p>
+        </section>
+      ) : grid.length > 0 ? (
+        <section aria-label="Published posts">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+              {grid.length} more article{grid.length !== 1 ? "s" : ""}
+            </span>
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {grid.map((post, i) => (
+              <PostCard key={post.id} post={post} variant="default" index={i} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
     </main>
   );
 }
